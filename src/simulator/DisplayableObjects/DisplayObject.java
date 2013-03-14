@@ -6,7 +6,7 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.LinkedList;
 
-public abstract class DisplayObject 
+public abstract class DisplayObject //LESLEY TEST
 {
 	protected String name;
 	protected String type;
