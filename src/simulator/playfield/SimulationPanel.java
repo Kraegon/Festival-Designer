@@ -30,10 +30,9 @@ public class SimulationPanel extends JPanel{
 	private static SimulationPanel INSTANCE;
 	private double zoom = 1;
 	private boolean isActive = true;
-	private Rectangle2D field;
 	private LinkedList<DisplayObject> displayObjects = new LinkedList<DisplayObject>();
-	private DisplayObject selectedObject;
-	private Point2D lastPoint = null;
+	private static DisplayObject selectedObject;
+	
 	private int focusX;
 	private int focusY;
 	
@@ -63,7 +62,7 @@ public class SimulationPanel extends JPanel{
 			}
 		});
 		addMouseMotionListener(new MouseMotionListener() {
-			
+			private Point2D lastPoint = null;
 			public void mouseMoved(MouseEvent arg0) {}
 			public void mouseDragged(MouseEvent e) {
 				if(lastPoint == null)
@@ -81,21 +80,14 @@ public class SimulationPanel extends JPanel{
 		});
 		addMouseListener(new MouseListener() {
 			public void mouseReleased(MouseEvent arg0) {}
-<<<<<<< HEAD
-			public void mousePressed(MouseEvent e) {
-<<<<<<< HEAD
-				System.out.println(selectedObject); // 
-=======
 			public void mousePressed(MouseEvent arg0) {}
 			public void mouseExited(MouseEvent arg0) {}
 			public void mouseEntered(MouseEvent arg0) {isActive = true;}
 			public void mouseClicked(MouseEvent e) {
->>>>>>> 01bded8f2c0b9519b8f9d91b74af0a95b1ef7d59
-=======
->>>>>>> parent of 92e4a7b... Committing on master because git forced me to
 				if(selectedObject != null){
 					selectedObject.setLocation(new Point2D.Double((e.getX() - focusX) / zoom, (e.getY() - focusY) / zoom));
-					displayObjects.add(selectedObject);
+					if(!displayObjects.contains(selectedObject))
+						displayObjects.add(selectedObject);
 				}
 			}
 		});
