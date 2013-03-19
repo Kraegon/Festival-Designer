@@ -65,7 +65,7 @@ public class Designer extends JFrame
         JPanel contentPane = new JPanel(new BorderLayout(10, 10));
         contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
         setLocation(new Point(100, 100));
-        setSize(800, 600);
+        setSize(800,600);
         
         westPanel.setLayout(new BorderLayout(20, 20));
         westPanel.add(objectHolder, BorderLayout.CENTER);
@@ -251,9 +251,11 @@ public class Designer extends JFrame
    
    public class MyMouseListener implements MouseListener
    {
-		@Override
-		public void mouseClicked(MouseEvent e) 
-		{
+		public void mouseClicked(MouseEvent e){}
+		public void mouseEntered(MouseEvent e) {}
+		public void mouseExited(MouseEvent e) {}
+		public void mousePressed(MouseEvent e) {}
+		public void mouseReleased(MouseEvent e) {
 			String value = objectList.getSelectedValue();
 			for (DisplayObject d : displayObjects)
 			{
@@ -263,11 +265,7 @@ public class Designer extends JFrame
 					SimulationPanel.getInstance().setSelectedObject(d);
 				}
 			}
-		}
-		public void mouseEntered(MouseEvent e) {}
-		public void mouseExited(MouseEvent e) {}
-		public void mousePressed(MouseEvent e) {}
-		public void mouseReleased(MouseEvent e) {}   
+		}   
    	}
 }
 class CloseOperation implements WindowListener{

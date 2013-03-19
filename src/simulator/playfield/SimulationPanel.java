@@ -3,7 +3,6 @@ package simulator.playfield;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.TexturePaint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,8 +11,10 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.Point2D.Double;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -29,8 +30,9 @@ public class SimulationPanel extends JPanel{
 	private static SimulationPanel INSTANCE;
 	private double zoom = 1;
 	private boolean isActive = true;
+	private Rectangle2D field;
 	private LinkedList<DisplayObject> displayObjects = new LinkedList<DisplayObject>();
-	private DisplayObject selectedObject;
+	private static DisplayObject selectedObject;
 	private Point2D lastPoint = null;
 	private int focusX;
 	private int focusY;
@@ -40,7 +42,8 @@ public class SimulationPanel extends JPanel{
 		displayObjects.add(new DisplayActor(new Point2D.Double(100, 60), 190));
 		displayObjects.add(new DisplayActor(new Point2D.Double(175, 20), 200));
 		displayObjects.add(new DisplayActor(new Point2D.Double(300, 100), 210));
-		Timer t = new Timer(1000/10, new ActionListener() {
+		
+		Timer t = new Timer(1000/60, new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if(isActive){				
 					repaint();	
@@ -53,9 +56,9 @@ public class SimulationPanel extends JPanel{
 		addMouseWheelListener(new MouseWheelListener() {
 			public void mouseWheelMoved(MouseWheelEvent e) {
 				int modifier = e.getWheelRotation();
-				if(modifier < 0)
+				if(modifier < 0 && zoom < 2.5)
 					zoom += 0.03;
-				else
+				else if(zoom > 1)
 					zoom -= 0.03;
 			}
 		});
@@ -65,29 +68,29 @@ public class SimulationPanel extends JPanel{
 			public void mouseDragged(MouseEvent e) {
 				if(lastPoint == null)
 					lastPoint = e.getPoint();
-				if(e.getPoint().getX() < lastPoint.getX())
+				if((e.getPoint().getX() < lastPoint.getX()))
 					focusX -= 2;
 				else if(e.getPoint().getX() > lastPoint.getX())
 					focusX += 2;
-				if(e.getPoint().getY() < lastPoint.getY())
+				if((e.getPoint().getY() < lastPoint.getY()))
 					focusY -= 2;
-				else if(e.getPoint().getY() > lastPoint.getY())
+				else if((e.getPoint().getY() > lastPoint.getY()))
 					focusY += 2;
 				lastPoint = e.getPoint();
 			}
 		});
-		addMouseListener(new MouseListener() {//TOEVOEGEN
+		addMouseListener(new MouseListener() {
 			public void mouseReleased(MouseEvent arg0) {}
-			public void mousePressed(MouseEvent e) {
+			public void mousePressed(MouseEvent arg0) {}
+			public void mouseExited(MouseEvent arg0) {}
+			public void mouseEntered(MouseEvent arg0) {isActive = true;}
+			public void mouseClicked(MouseEvent e) {
 				if(selectedObject != null){
-					selectedObject.setLocation(new Point2D.Double(e.getX(), e.getY()));
+					selectedObject.setLocation(new Point2D.Double((e.getX() - focusX) / zoom, (e.getY() - focusY) / zoom));
 					displayObjects.add(selectedObject);
 				}
 			}
-			public void mouseExited(MouseEvent arg0) {}
-			public void mouseEntered(MouseEvent arg0) {isActive = true;}
-			public void mouseClicked(MouseEvent arg0) {}
-		});//TOT HIER
+		});
 	}
 	public static SimulationPanel getInstance(){
 		if(INSTANCE == null)
@@ -115,9 +118,9 @@ public class SimulationPanel extends JPanel{
 		}
 	}
 	public DisplayObject getSelectedObject() {
-		return selectedObject;
+		return SimulationPanel.selectedObject;
 	}
 	public void setSelectedObject(DisplayObject selectedObject) {
-		this.selectedObject = selectedObject;
+		SimulationPanel.selectedObject = selectedObject;
 	}
 }

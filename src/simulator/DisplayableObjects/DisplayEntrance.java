@@ -15,7 +15,7 @@ public class DisplayEntrance extends DisplayObject
 	@Override
 	public void drawObject(Graphics2D g) {
 		Rectangle2D entrance = new Rectangle2D.Double(location.getX(), location.getY(), size.getWidth(), size.getHeight());
-		g.draw(entrance);
+		g.fill(entrance);
 	}
 
 	@Override
