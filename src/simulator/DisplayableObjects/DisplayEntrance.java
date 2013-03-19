@@ -15,6 +15,7 @@ public class DisplayEntrance extends DisplayObject
 	}
 
 	@Override
+<<<<<<< HEAD
 	public void drawObject(Graphics2D g) 
 	{
 		Rectangle2D obstacle = new Rectangle2D.Double(location.getX() - size.getWidth()/2, 
@@ -22,6 +23,11 @@ public class DisplayEntrance extends DisplayObject
 												      size.getWidth(), size.getHeight());
 		bounds = obstacle;
 		g.fill(obstacle);
+=======
+	public void drawObject(Graphics2D g) {
+		Rectangle2D entrance = new Rectangle2D.Double(location.getX(), location.getY(), size.getWidth(), size.getHeight());
+		g.fill(entrance);
+>>>>>>> 01bded8f2c0b9519b8f9d91b74af0a95b1ef7d59
 	}
 
 	@Override
