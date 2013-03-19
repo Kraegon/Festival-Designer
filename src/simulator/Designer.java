@@ -261,6 +261,7 @@ public class Designer extends JFrame
 				{
 					southLabel.setText(d.toString());
 					SimulationPanel.getInstance().setSelectedObject(d);
+					
 				}
 			}
 		}

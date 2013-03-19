@@ -7,19 +7,32 @@ import java.awt.geom.Rectangle2D;
 
 public class DisplayEntrance extends DisplayObject
 {
+	Rectangle2D bounds;
+	
 	public DisplayEntrance(String name, Dimension size, boolean isSolid, Point2D location, String type)
 	{
 		super(name, size, false, location, "Entrance");
 	}
 
 	@Override
-	public void drawObject(Graphics2D g) {
-		Rectangle2D entrance = new Rectangle2D.Double(location.getX(), location.getY(), size.getWidth(), size.getHeight());
-		g.draw(entrance);
+	public void drawObject(Graphics2D g) 
+	{
+		Rectangle2D obstacle = new Rectangle2D.Double(location.getX() - size.getWidth()/2, 
+												      location.getY() - size.getHeight()/2,
+												      size.getWidth(), size.getHeight());
+		bounds = obstacle;
+		g.fill(obstacle);
 	}
 
 	@Override
 	public void update() {
-		//Stand there and look pretty.
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Rectangle2D getBounds() 
+	{
+		return bounds;
 	}
 }

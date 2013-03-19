@@ -30,7 +30,7 @@ public class SimulationPanel extends JPanel{
 	private double zoom = 1;
 	private boolean isActive = true;
 	private LinkedList<DisplayObject> displayObjects = new LinkedList<DisplayObject>();
-	private DisplayObject selectedObject;
+	private static DisplayObject selectedObject;
 	private Point2D lastPoint = null;
 	private int focusX;
 	private int focusY;
@@ -79,9 +79,11 @@ public class SimulationPanel extends JPanel{
 		addMouseListener(new MouseListener() {//TOEVOEGEN
 			public void mouseReleased(MouseEvent arg0) {}
 			public void mousePressed(MouseEvent e) {
+				System.out.println(selectedObject); // 
 				if(selectedObject != null){
 					selectedObject.setLocation(new Point2D.Double(e.getX(), e.getY()));
 					displayObjects.add(selectedObject);
+					System.out.println(selectedObject); // 
 				}
 			}
 			public void mouseExited(MouseEvent arg0) {}
@@ -101,7 +103,8 @@ public class SimulationPanel extends JPanel{
 		isActive = !isActive;
 	}
 	
-	public void paintComponent(Graphics gTemp){
+	public void paintComponent(Graphics gTemp)
+	{
 		Graphics2D g = (Graphics2D) gTemp;
 		try {
 			g.setPaint(new TexturePaint(ImageIO.read(new File("Data\\grass.png")), new Rectangle2D.Double(focusX, focusY, 256 * zoom, 256 * zoom)));

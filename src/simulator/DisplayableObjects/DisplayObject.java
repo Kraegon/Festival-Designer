@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
 
 public abstract class DisplayObject 
@@ -30,6 +31,8 @@ public abstract class DisplayObject
 	public abstract void drawObject(Graphics2D g);
 	
 	public abstract void update();
+	
+	public abstract Rectangle2D getBounds();
 	
 	public String getName() {
 		return name;
