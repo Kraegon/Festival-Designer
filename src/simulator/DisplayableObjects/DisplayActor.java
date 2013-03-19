@@ -17,8 +17,8 @@ import javax.swing.Timer;
 
 
 @SuppressWarnings("serial")
-public class DisplayActor extends DisplayObject
-{
+public class DisplayActor extends DisplayObject{
+	
 	private BufferedImage image;
 	private Image imageActor;
 	private Point2D location;
@@ -30,7 +30,6 @@ public class DisplayActor extends DisplayObject
 	private static int id = 0;
 	private final static int WIDTH = 16;
 	private final static int HEIGHT = 16;
-	Rectangle2D bounds;
 	
 	public DisplayActor(Point2D location, double direction){
 		super("Actor " + id, new Dimension(16,16), true, location, "actor");
@@ -40,12 +39,6 @@ public class DisplayActor extends DisplayObject
 		this.speed = 10;
 		this.imageActor = new ImageIcon("Data\\Actor.png").getImage();
 		targetLocation = location;
-		bounds = new Rectangle2D.Double(location.getX(), location.getY(), 16, 16);
-	}
-	
-	public Rectangle2D getBounds()
-	{
-		return bounds;
 	}
 	
 	public double getDirection(){

@@ -32,7 +32,7 @@ public class SimulationPanel extends JPanel{
 	private boolean isActive = true;
 	private Rectangle2D field;
 	private LinkedList<DisplayObject> displayObjects = new LinkedList<DisplayObject>();
-	private static DisplayObject selectedObject;
+	private DisplayObject selectedObject;
 	private Point2D lastPoint = null;
 	private int focusX;
 	private int focusY;
@@ -83,6 +83,7 @@ public class SimulationPanel extends JPanel{
 			public void mouseReleased(MouseEvent arg0) {}
 <<<<<<< HEAD
 			public void mousePressed(MouseEvent e) {
+<<<<<<< HEAD
 				System.out.println(selectedObject); // 
 =======
 			public void mousePressed(MouseEvent arg0) {}
@@ -90,10 +91,11 @@ public class SimulationPanel extends JPanel{
 			public void mouseEntered(MouseEvent arg0) {isActive = true;}
 			public void mouseClicked(MouseEvent e) {
 >>>>>>> 01bded8f2c0b9519b8f9d91b74af0a95b1ef7d59
+=======
+>>>>>>> parent of 92e4a7b... Committing on master because git forced me to
 				if(selectedObject != null){
 					selectedObject.setLocation(new Point2D.Double((e.getX() - focusX) / zoom, (e.getY() - focusY) / zoom));
 					displayObjects.add(selectedObject);
-					System.out.println(selectedObject); // 
 				}
 			}
 		});
@@ -110,8 +112,7 @@ public class SimulationPanel extends JPanel{
 		isActive = !isActive;
 	}
 	
-	public void paintComponent(Graphics gTemp)
-	{
+	public void paintComponent(Graphics gTemp){
 		Graphics2D g = (Graphics2D) gTemp;
 		try {
 			g.setPaint(new TexturePaint(ImageIO.read(new File("Data\\grass.png")), new Rectangle2D.Double(focusX, focusY, 256 * zoom, 256 * zoom)));
