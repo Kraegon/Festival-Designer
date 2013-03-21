@@ -11,10 +11,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Point2D.Double;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -26,7 +24,8 @@ import javax.swing.Timer;
 import simulator.DisplayableObjects.DisplayActor;
 import simulator.DisplayableObjects.DisplayObject;
 
-public class SimulationPanel extends JPanel{
+public class SimulationPanel extends JPanel
+{
 	private static SimulationPanel INSTANCE;
 	private double zoom = 1;
 	private boolean isActive = true;
@@ -37,7 +36,8 @@ public class SimulationPanel extends JPanel{
 	private int focusX;
 	private int focusY;
 	
-	public SimulationPanel(){
+	public SimulationPanel()
+	{
 		displayObjects.add(new DisplayActor(new Point2D.Double(50, 30), 180));
 		displayObjects.add(new DisplayActor(new Point2D.Double(100, 60), 190));
 		displayObjects.add(new DisplayActor(new Point2D.Double(175, 20), 200));

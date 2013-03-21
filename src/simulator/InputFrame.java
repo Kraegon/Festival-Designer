@@ -259,8 +259,8 @@ public class InputFrame extends JFrame
 						PrintWriter out = new PrintWriter(Output);
 						
 						out.println(name.getText()); // name
-						out.println("30"); // width
-						out.println("30"); // height
+						out.println("50"); // width
+						out.println("50"); // height
 						out.println("false"); // isSolid
 						out.println("0"); // x
 						out.println("0"); // y
@@ -324,8 +324,8 @@ public class InputFrame extends JFrame
 						PrintWriter out = new PrintWriter(Output);
 						
 						out.println(name.getText()); // name
-						out.println("30"); // width
-						out.println("30"); // height
+						out.println("50"); // width
+						out.println("50"); // height
 						out.println("false"); // isSolid
 						out.println("0"); // x
 						out.println("0"); // y
@@ -459,8 +459,8 @@ public class InputFrame extends JFrame
 						PrintWriter out = new PrintWriter(Output);
 						
 						out.println(name.getText()); // name
-						out.println("30"); // width
-						out.println("30"); // height
+						out.println("50"); // width
+						out.println("50"); // height
 						out.println("false"); // isSolid
 						out.println("0"); // x
 						out.println("0"); // y
