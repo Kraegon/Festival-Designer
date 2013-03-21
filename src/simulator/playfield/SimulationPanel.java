@@ -35,6 +35,8 @@ public class SimulationPanel extends JPanel
 	private Point2D lastPoint = null;
 	private int focusX;
 	private int focusY;
+	static boolean TargetingMode = false;
+	PopupListener popup = new PopupListener();
 	
 	public SimulationPanel()
 	{
@@ -81,17 +83,56 @@ public class SimulationPanel extends JPanel
 		});
 		addMouseListener(new MouseListener() {
 			public void mouseReleased(MouseEvent arg0) {}
-			public void mousePressed(MouseEvent e) 
-			{
-				System.out.println(selectedObject); 
-			}
+			public void mousePressed(MouseEvent e) {}
 			public void mouseExited(MouseEvent arg0) {}
 			public void mouseEntered(MouseEvent arg0) {isActive = true;}
-			public void mouseClicked(MouseEvent e) 
-			{
-				if(selectedObject != null){
+			public void mouseClicked(MouseEvent e) {
+				if(TargetingMode == false)
+				{
+				if(selectedObject != null)
+				{
+					if (e.getButton() == MouseEvent.BUTTON1) 
+					{ 
 					selectedObject.setLocation(new Point2D.Double((e.getX() - focusX) / zoom, (e.getY() - focusY) / zoom));
 					displayObjects.add(selectedObject);
+					}
+					else if(e.getButton() == MouseEvent.BUTTON3)
+					{ 
+							
+							popup.show(e, selectedObject);
+					}
+				} 
+				}	
+				else
+				{
+					System.out.println("targeting enabled");
+					if (e.getButton() == MouseEvent.BUTTON1) 
+					{ 
+						for(DisplayObject a : displayObjects)
+						{
+							Point2D mouse = e.getPoint();
+							//System.out.println("mouse: " + mouse);
+							Point2D object = a.getLocation();
+							//System.out.println("object: " + object);
+							
+							int mousex = (int) mouse.getX();
+							int mousey = (int) mouse.getY();						
+									
+							int x = (int)object.getX();
+							int y = (int)object.getY();
+							
+							int x2 = x + a.getX();
+							int y2 = y + a.getY();
+							
+							if(mousex >= x && mousey >= y && mousex <= x2 && mousey <= y2)
+							{
+								System.out.println("locatie = " + a.getName());
+								//a.addTarget(a.getName());
+								TargetingMode = false;
+								//System.out.println(a.getTargets());
+							}
+						}
+					}
 				}
 			}
 		});
