@@ -1,10 +1,22 @@
-package timetableModule.gui;
+package IO;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
-import timetableModule.data.*;
-
-import timetableModule.timetableScreen.*;
+import simulator.DisplayableObjects.DisplayObject;
+import timetableModule.data.Artist;
+import timetableModule.data.Festival;
+import timetableModule.data.Performance;
+import timetableModule.data.Stage;
+import timetableModule.timetableScreen.GraphicArtist;
+import timetableModule.timetableScreen.GraphicPerformance;
+import timetableModule.timetableScreen.GraphicStage;
+import timetableModule.timetableScreen.Screen;
 
 /**
  * Handles file IO for festivals. Will pass festival objects to GUI.
@@ -102,5 +114,39 @@ public class IO {
 			System.out.print(festival.toString());
 		else
 			System.out.println("No current festival");
+	}
+	
+	public void saveFestivalObject(DisplayObject o){
+		ObjectOutputStream objOut;
+		File objectFile = new File("Objecten\\" + o.getName() + ".object");
+		try {
+			objOut = new ObjectOutputStream(new FileOutputStream(objectFile));
+			if(!objectFile.exists()){
+					objectFile.createNewFile();
+			}
+			objOut.writeObject(o);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	public DisplayObject openFestivalObect(String objectName){
+		ObjectInputStream objIn;
+		File objectFile = new File("Objecten\\" + objectName);
+		try{
+			objIn = new ObjectInputStream(new FileInputStream(objectFile));
+			DisplayObject opened = (DisplayObject) objIn.readObject();
+			objIn.close();
+			return opened;
+		} catch (ClassNotFoundException e) {
+			System.out.println("Class not found");
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

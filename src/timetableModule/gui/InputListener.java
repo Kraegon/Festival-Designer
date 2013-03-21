@@ -15,9 +15,14 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JTextField;
 
-import timetableModule.data.*;
-
-import timetableModule.timetableScreen.*;
+import timetableModule.data.Artist;
+import timetableModule.data.Performance;
+import timetableModule.data.Stage;
+import timetableModule.timetableScreen.GraphicArtist;
+import timetableModule.timetableScreen.GraphicPerformance;
+import timetableModule.timetableScreen.GraphicStage;
+import timetableModule.timetableScreen.Screen;
+import IO.IO;
 
 
 

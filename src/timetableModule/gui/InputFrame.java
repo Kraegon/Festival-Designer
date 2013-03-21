@@ -5,18 +5,21 @@ package timetableModule.gui;
 
 
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.LayoutManager;
+import java.awt.FlowLayout;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
-
-import java.awt.*;
-import java.awt.event.*;
-import java.util.LinkedList;
+import IO.IO;
 
 public class InputFrame{
 	

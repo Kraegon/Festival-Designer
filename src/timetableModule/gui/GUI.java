@@ -3,14 +3,12 @@ package timetableModule.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.GregorianCalendar;
-import java.util.Random;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -29,7 +27,9 @@ import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import timetableModule.timetableScreen.*;
+import timetableModule.timetableScreen.GraphicBackdrop;
+import timetableModule.timetableScreen.Screen;
+import IO.IO;
 
 	public class GUI extends JFrame
 	{

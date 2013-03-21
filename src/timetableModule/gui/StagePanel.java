@@ -18,7 +18,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import timetableModule.data.*;
+import timetableModule.data.Stage;
+import IO.IO;
 
 
 

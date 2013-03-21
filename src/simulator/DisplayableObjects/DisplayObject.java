@@ -4,9 +4,10 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Point2D;
-import java.util.LinkedList;
+import java.io.Serializable;
+import java.util.ArrayList;
 
-public abstract class DisplayObject //LESLEY TEST
+public abstract class DisplayObject implements Serializable//LESLEY TEST
 {
 	protected String name;
 	protected String type;
@@ -17,6 +18,7 @@ public abstract class DisplayObject //LESLEY TEST
 	protected boolean isSolid = true;
 	protected Dimension size = new Dimension(width, height);
 	protected Point2D location = new Point(x, y);
+	protected ArrayList<String> targets = new ArrayList<String>();
 	
 	public DisplayObject(String name, Dimension size, boolean isSolid, Point2D location, String type)
 	{
@@ -48,7 +50,7 @@ public abstract class DisplayObject //LESLEY TEST
 	}
 
 	public int getX() {
-		return x;
+		return (int)location.getX();
 	}
 
 	public void setX(int x) {
@@ -56,7 +58,7 @@ public abstract class DisplayObject //LESLEY TEST
 	}
 
 	public int getY() {
-		return y;
+		return (int)location.getY();
 	}
 
 	public void setY(int y) {
@@ -106,5 +108,12 @@ public abstract class DisplayObject //LESLEY TEST
 	public String toString() {
 		return type + ": Name = " + name + ", Dimension = " + size.getWidth() + " x " + size.getHeight() +
 			   ", isSolid = " + isSolid + ", Location = (" + location.getX() + ", " + location.getY() + ")";
+	}
+	public ArrayList<String> getTargets() {
+		return targets;
+		
+	}
+	public void addTarget(String t) {
+		targets.add(t);
 	}
 }

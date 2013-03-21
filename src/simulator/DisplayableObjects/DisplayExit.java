@@ -2,11 +2,11 @@ package simulator.DisplayableObjects;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.Serializable;
 
-public class DisplayExit extends DisplayObject
+public class DisplayExit extends DisplayObject implements Serializable
 {
 	Rectangle2D bounds;
 	
@@ -17,9 +17,8 @@ public class DisplayExit extends DisplayObject
 
 	@Override
 	public void drawObject(Graphics2D g) {
-		Rectangle2D obstacle = new Rectangle2D.Double(location.getX() - size.getWidth()/2, 
-			      location.getY() - size.getHeight()/2,
-			      size.getWidth(), size.getHeight());
+		Rectangle2D obstacle = new Rectangle2D.Double(location.getX(), location.getY(),
+				  									  size.getWidth(), size.getHeight());
 		
 		bounds = obstacle;
 		g.fill(obstacle);

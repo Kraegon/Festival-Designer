@@ -20,15 +20,16 @@ class PopupListener extends MouseAdapter
 	private static DisplayObject selectedObject;
 	JLabel kop = new JLabel("");
 	JMenuItem menuItem = new JMenuItem("Set Target");
-	JMenuItem Rotation = new JMenuItem("Rotation");
+	JMenuItem rotation = new JMenuItem("Rotation");
+	JMenuItem size = new JMenuItem("Size");
 
 	public PopupListener() {
 		// jesper 19-3
 		popup = new JPopupMenu();
 		popup.add(kop);
-		popup.add(Rotation);
+		popup.add(rotation);
+		popup.add(size);
 		popup.add(menuItem);
-
 	}
 	
 	public void show(MouseEvent e, DisplayObject a) {
@@ -37,14 +38,12 @@ class PopupListener extends MouseAdapter
 		
 		menuItem.addActionListener(new ActionListener() 
 		{
-
 			@Override
 			public void actionPerformed(ActionEvent action) 
 			{
-				//Designer.setSouthLabel("Target mode enabled");
-				//SimulationPanel.setTargetingMode(true);
+				Designer.setSouthLabel("Target mode enabled");
+				SimulationPanel.setTargetingMode(true);
 			}
-		
 		});
 		// show
 		popup.show(e.getComponent(), e.getX(), e.getY());

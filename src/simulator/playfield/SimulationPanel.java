@@ -1,6 +1,7 @@
 package simulator.playfield;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.TexturePaint;
@@ -31,19 +32,23 @@ public class SimulationPanel extends JPanel
 	private boolean isActive = true;
 	private Rectangle2D field;
 	private LinkedList<DisplayObject> displayObjects = new LinkedList<DisplayObject>();
+	private LinkedList<DisplayActor> displayActor = new LinkedList<DisplayActor>();
 	private static DisplayObject selectedObject;
 	private Point2D lastPoint = null;
 	private int focusX;
 	private int focusY;
 	static boolean TargetingMode = false;
 	PopupListener popup = new PopupListener();
+	SelectionArrow arrow = new SelectionArrow(0, 0);
 	
 	public SimulationPanel()
 	{
-		displayObjects.add(new DisplayActor(new Point2D.Double(50, 30), 180));
-		displayObjects.add(new DisplayActor(new Point2D.Double(100, 60), 190));
-		displayObjects.add(new DisplayActor(new Point2D.Double(175, 20), 200));
-		displayObjects.add(new DisplayActor(new Point2D.Double(300, 100), 210));
+		double direction = Math.random() * 2 * Math.PI;
+		for (int i = 0; i < 100; i++){
+			displayActor.add(new DisplayActor((new Point2D.Double(50, 50)), direction));
+		}
+
+		displayObjects.addAll(displayActor);
 		
 		Timer t = new Timer(1000/60, new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -87,54 +92,57 @@ public class SimulationPanel extends JPanel
 			public void mouseExited(MouseEvent arg0) {}
 			public void mouseEntered(MouseEvent arg0) {isActive = true;}
 			public void mouseClicked(MouseEvent e) {
-				if(TargetingMode == false)
-				{
-				if(selectedObject != null)
-				{
-					if (e.getButton() == MouseEvent.BUTTON1) 
-					{ 
-					selectedObject.setLocation(new Point2D.Double((e.getX() - focusX) / zoom, (e.getY() - focusY) / zoom));
-					displayObjects.add(selectedObject);
-					}
-					else if(e.getButton() == MouseEvent.BUTTON3)
-					{ 
-							
+				if (TargetingMode == false) {
+					if (selectedObject != null) {
+						if (e.getButton() == MouseEvent.BUTTON1) {
+							selectedObject.setLocation(new Point2D.Double((e
+									.getX() - focusX) / zoom,
+									(e.getY() - focusY) / zoom));
+							displayObjects.add(selectedObject);
+						} else if (e.getButton() == MouseEvent.BUTTON3) {
+
 							popup.show(e, selectedObject);
+						}
 					}
-				} 
-				}	
-				else
-				{
-					System.out.println("targeting enabled");
-					if (e.getButton() == MouseEvent.BUTTON1) 
-					{ 
-						for(DisplayObject a : displayObjects)
-						{
+				} else {
+
+					if (e.getButton() == MouseEvent.BUTTON1) {
+						// loop de array door of er een toe te voegen object is.
+						for (DisplayObject a : displayObjects) {
+
 							Point2D mouse = e.getPoint();
-							//System.out.println("mouse: " + mouse);
+							// System.out.println("mouse: " + mouse);
 							Point2D object = a.getLocation();
-							//System.out.println("object: " + object);
-							
+							// System.out.println("object: " + object);
+
 							int mousex = (int) mouse.getX();
-							int mousey = (int) mouse.getY();						
-									
-							int x = (int)object.getX();
-							int y = (int)object.getY();
-							
-							int x2 = x + a.getX();
-							int y2 = y + a.getY();
-							
-							if(mousex >= x && mousey >= y && mousex <= x2 && mousey <= y2)
-							{
-								System.out.println("locatie = " + a.getName());
-								//a.addTarget(a.getName());
+							int mousey = (int) mouse.getY();
+
+							Point2D objectLocation = a.getLocation();
+							Dimension objectSize = a.getSize();
+
+							int x = (int) objectLocation.getX();
+							int y = (int) objectLocation.getY();
+
+							int x2 = (int) (x + objectSize.getWidth());
+							int y2 = (int) (y + objectSize.getHeight());
+
+							if (mousex >= x && mousey >= y && mousex <= x2
+									&& mousey <= y2) {
+
+								selectedObject.addTarget(a.getName());
 								TargetingMode = false;
-								//System.out.println(a.getTargets());
+								System.out
+										.println("---------------------------------------");
+
+								System.out.println("added target: "
+										+ a.getName());
 							}
 						}
 					}
 				}
 			}
+
 		});
 	}
 	public static SimulationPanel getInstance(){
@@ -158,14 +166,29 @@ public class SimulationPanel extends JPanel
 		g.translate(focusX, focusY);
 		g.scale(zoom, zoom);
 		g.setPaint(Color.BLACK);
-		for(DisplayObject a : displayObjects){
+		for(DisplayObject a : displayObjects)
+		{
 			a.drawObject(g);
 		}
+		arrow.drawObject(g);
 	}
+	
+	public void setArrow(double x, double y)
+	{
+		arrow.setX(x);
+		arrow.setY(y);
+	}
+	
 	public DisplayObject getSelectedObject() {
 		return SimulationPanel.selectedObject;
 	}
 	public void setSelectedObject(DisplayObject selectedObject) {
 		SimulationPanel.selectedObject = selectedObject;
+	}
+	public static boolean isTargetingMode() {
+		return TargetingMode;
+	}
+	public static void setTargetingMode(boolean targetingMode) {
+		TargetingMode = targetingMode;
 	}
 }

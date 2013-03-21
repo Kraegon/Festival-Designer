@@ -1,6 +1,4 @@
 package timetableModule.timetableScreen;
-import timetableModule.gui.IO;
-
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;

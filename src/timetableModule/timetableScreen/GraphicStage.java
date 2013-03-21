@@ -1,6 +1,4 @@
 package timetableModule.timetableScreen;
-import timetableModule.gui.IO;
-
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -9,7 +7,8 @@ import java.util.LinkedList;
 
 import javax.swing.JPanel;
 
-import timetableModule.data.*;
+import timetableModule.data.Stage;
+import IO.IO;
 
 
 

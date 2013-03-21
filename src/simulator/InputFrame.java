@@ -2,14 +2,12 @@ package simulator;
 // InputFrame class for 2D-Designer
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.awt.geom.Point2D;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -21,6 +19,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+
+import simulator.DisplayableObjects.DisplayCatering;
+import simulator.DisplayableObjects.DisplayEntrance;
+import simulator.DisplayableObjects.DisplayExit;
+import simulator.DisplayableObjects.DisplayObject;
+import simulator.DisplayableObjects.DisplayObstacle;
+import simulator.DisplayableObjects.DisplayStage;
+import simulator.DisplayableObjects.DisplayToilet;
+import IO.IO;
 
 public class InputFrame extends JFrame
 {
@@ -96,50 +103,19 @@ public class InputFrame extends JFrame
 		{
 			public void actionPerformed(ActionEvent e) 
 			{
-				try
-				{	
-					JTextField name = (JTextField) comps[3];
-					JTextField breedte = (JTextField) comps[4];
-					JTextField hoogte = (JTextField) comps[5];
-					String solid;
-					if(b.isSelected())
-					{
-						solid = "true";
-					}
-					else
-					{
-						solid = "false";
-					}
+				JTextField name = (JTextField) comps[3];
+				JTextField breedte = (JTextField) comps[4];
+				JTextField hoogte = (JTextField) comps[5];
 					
-					if (checkInp.checkString(name.getText()) && checkInp.checkNumber(breedte.getText()) && checkInp.checkNumber(hoogte.getText()))
-					{
-						File file = new File("Objecten/" + name.getText() + ".object");
-						FileWriter Output = new FileWriter(file);
-						PrintWriter out = new PrintWriter(Output);
-						
-					 	for(JComponent component : comps)
-					 	{
-							if(component.getClass() == JTextField.class)
-							{
-								JTextField compTemp = (JTextField) component;
-								out.println(compTemp.getText());
-							} 
-					 	}
-					 	out.println(solid); // isSolid
-					 	out.println("0"); // x
-					 	out.println("0"); // y
-					 	out.println("Obstacle"); // type
-					 	out.close();		
-					 	dispose();	
-					}
-					else
-					{
-						showInputErrorPane();
-					}
-				}
-				catch(IOException b)
+				if (checkInp.checkString(name.getText()) && checkInp.checkNumber(breedte.getText()) && checkInp.checkNumber(hoogte.getText()))
 				{
-					System.out.println("Je bent gefaald noob");
+				 	DisplayObstacle o = new DisplayObstacle(name.getText(), new Dimension(Integer.parseInt(breedte.getText()),Integer.parseInt(hoogte.getText())), true, new Point2D.Double(0,0), "obstacle");
+				 	IO.getInstance().saveFestivalObject(o);
+				 	dispose();	
+				}
+				else
+				{
+					showInputErrorPane();
 				}
 			}
 		});		
@@ -175,43 +151,20 @@ public class InputFrame extends JFrame
 		{
 			public void actionPerformed(ActionEvent e) 
 			{
-				try
-				{	
-					JComboBox c = (JComboBox)comps[3]; // kopieren naar c, anders kan de waarde niet opgehaald worden
-					JTextField stage = new JTextField(c.getSelectedItem().toString()); // waarde in lokale textfield zetten omdat dat makkelijker is 
-					JTextField breedte = (JTextField) comps[4];
-					JTextField hoogte = (JTextField) comps[5];
+
+				JTextField name = (JTextField) comps[3];
+				JTextField breedte = (JTextField) comps[4];
+				JTextField hoogte = (JTextField) comps[5];
 					
-					if (checkInp.checkNumber(breedte.getText()) && checkInp.checkNumber(hoogte.getText()))
-					{
-						File file = new File("Objecten/" + stage.getText() + ".object");
-						FileWriter Output = new FileWriter(file);
-						PrintWriter out = new PrintWriter(Output);
-						
-						out.println(stage.getText()); // eerst de naam van de stage in de file zetten
-					 	for(JComponent component : comps)
-					 	{
-							if(component.getClass() == JTextField.class)
-							{
-								JTextField compTemp = (JTextField) component;
-								out.println(compTemp.getText());
-							} 
-					 	}
-					 	out.println("true"); // isSolid
-					 	out.println("0"); // x
-					 	out.println("0"); // y
-					 	out.println("Stage"); // type
-					 	out.close();		
-					 	dispose();	
-					}
-					else
-					{
-						showInputErrorPane();
-					}
-				}
-				catch(IOException b)
+				if (checkInp.checkString(name.getText()) && checkInp.checkNumber(breedte.getText()) && checkInp.checkNumber(hoogte.getText()))
 				{
-					System.out.println("Je bent gefaald noob");
+					DisplayObject o = new DisplayStage(name.getText(), new Dimension(Integer.parseInt(breedte.getText()),Integer.parseInt(hoogte.getText())), false, new Point2D.Double(0,0), "Stage");			
+					IO.getInstance().saveFestivalObject(o);
+					dispose();
+				}
+				else
+				{
+					showInputErrorPane();
 				}
 			}
 		});		
@@ -248,35 +201,16 @@ public class InputFrame extends JFrame
 		{
 			public void actionPerformed(ActionEvent e) 
 			{
-				try
-				{	
-					JTextField name = (JTextField) comps[1];
-					
-					if (checkInp.checkString(name.getText()))
-					{
-						File file = new File("Objecten/" + name.getText() + ".object");
-						FileWriter Output = new FileWriter(file);
-						PrintWriter out = new PrintWriter(Output);
-						
-						out.println(name.getText()); // name
-						out.println("50"); // width
-						out.println("50"); // height
-						out.println("false"); // isSolid
-						out.println("0"); // x
-						out.println("0"); // y
-						out.println("Entrance"); // type
-
-					 	out.close();		
-					 	dispose();	
-					}
-					else
-					{
-						showInputErrorPane();
-					}
-				}
-				catch(IOException b)
+				JTextField name = (JTextField) comps[1];
+				if (checkInp.checkString(name.getText()))
 				{
-					System.out.println("Je bent gefaald noob");
+					DisplayObject o = new DisplayEntrance(name.getText(), new Dimension(30,30), false, new Point2D.Double(0,0), "Entrance");			
+					IO.getInstance().saveFestivalObject(o);
+					dispose();	
+				}
+				else
+				{
+					showInputErrorPane();
 				}
 			}
 		});		
@@ -313,35 +247,17 @@ public class InputFrame extends JFrame
 		{
 			public void actionPerformed(ActionEvent e) 
 			{
-				try
-				{	
-					JTextField name = (JTextField) comps[1];
+				JTextField name = (JTextField) comps[1];
 					
-					if (checkInp.checkString(name.getText()))
-					{
-						File file = new File("Objecten/" + name.getText() + ".object");
-						FileWriter Output = new FileWriter(file);
-						PrintWriter out = new PrintWriter(Output);
-						
-						out.println(name.getText()); // name
-						out.println("50"); // width
-						out.println("50"); // height
-						out.println("false"); // isSolid
-						out.println("0"); // x
-						out.println("0"); // y
-						out.println("Exit"); // type
-
-					 	out.close();		
-					 	dispose();	
-					}
-					else
-					{
-						showInputErrorPane();
-					}
-				}
-				catch(IOException b)
+				if (checkInp.checkString(name.getText()))
 				{
-					System.out.println("Je bent gefaald noob");
+					DisplayObject o = new DisplayExit(name.getText(), new Dimension(30,30), false, new Point2D.Double(0,0), "Exit");			
+					IO.getInstance().saveFestivalObject(o);
+					dispose();
+				}
+				else
+				{
+					showInputErrorPane();
 				}
 			}
 		});		
@@ -377,41 +293,19 @@ public class InputFrame extends JFrame
 		{
 			public void actionPerformed(ActionEvent e) 
 			{
-				try
-				{	
-					JTextField name = (JTextField) comps[3];
-					JTextField breedte = (JTextField) comps[4];
-					JTextField hoogte = (JTextField) comps[5];
-					
-					if (checkInp.checkString(name.getText()) && checkInp.checkNumber(breedte.getText()) && checkInp.checkNumber(hoogte.getText()))
-					{
-						File file = new File("Objecten/" + name.getText() + ".object");
-						FileWriter Output = new FileWriter(file);
-						PrintWriter out = new PrintWriter(Output);
-						
-					 	for(JComponent component : comps)
-					 	{
-							if(component.getClass() == JTextField.class)
-							{
-								JTextField compTemp = (JTextField) component;
-								out.println(compTemp.getText());
-							} 
-					 	}
-					 	out.println("true"); // isSolid
-					 	out.println("0"); // x
-					 	out.println("0"); // y
-					 	out.println("Catering"); // type
-					 	out.close();		
-					 	dispose();	
-					}
-					else
-					{
-						showInputErrorPane();
-					}
-				}
-				catch(IOException b)
+				JTextField name = (JTextField) comps[3];
+				JTextField breedte = (JTextField) comps[4];
+				JTextField hoogte = (JTextField) comps[5];
+				
+				if (checkInp.checkString(name.getText()) && checkInp.checkNumber(breedte.getText()) && checkInp.checkNumber(hoogte.getText()))
 				{
-					System.out.println("Je bent gefaald noob");
+					DisplayObject o = new DisplayCatering(name.getText(), new Dimension(Integer.parseInt(breedte.getText()),Integer.parseInt(hoogte.getText())), false, new Point2D.Double(0,0), "Catering");			
+					IO.getInstance().saveFestivalObject(o);
+					dispose();
+				}
+				else
+				{
+					showInputErrorPane();
 				}
 			}
 		});		
@@ -440,7 +334,6 @@ public class InputFrame extends JFrame
 				rightPane.add(component);
 			}
 		}
-		
 		JPanel okPane = new JPanel();
 		JButton ok = new JButton("OK");
 		okPane.add(ok);
@@ -448,35 +341,17 @@ public class InputFrame extends JFrame
 		{
 			public void actionPerformed(ActionEvent e) 
 			{
-				try
-				{	
-					JTextField name = (JTextField) comps[1];
+				JTextField name = (JTextField) comps[1];
 					
-					if (checkInp.checkString(name.getText()))
-					{
-						File file = new File("Objecten/" + name.getText() + ".object");
-						FileWriter Output = new FileWriter(file);
-						PrintWriter out = new PrintWriter(Output);
-						
-						out.println(name.getText()); // name
-						out.println("50"); // width
-						out.println("50"); // height
-						out.println("false"); // isSolid
-						out.println("0"); // x
-						out.println("0"); // y
-						out.println("Toilet"); // type
-
-					 	out.close();		
-					 	dispose();	
-					}
-					else
-					{
-						showInputErrorPane();
-					}
-				}
-				catch(IOException b)
+				if (checkInp.checkString(name.getText()))
 				{
-					System.out.println("Je bent gefaald noob");
+					DisplayObject o = new DisplayToilet(name.getText(), new Dimension(30,30), false, new Point2D.Double(0,0), "Toilet");			
+					IO.getInstance().saveFestivalObject(o);
+					dispose();
+				}
+				else
+				{
+					showInputErrorPane();
 				}
 			}
 		});		

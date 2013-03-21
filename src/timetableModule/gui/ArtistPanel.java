@@ -6,7 +6,6 @@ package timetableModule.gui;
 
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -20,6 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import timetableModule.data.Artist;
+import IO.IO;
 
 
 
