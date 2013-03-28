@@ -26,6 +26,7 @@ import simulator.DisplayableObjects.DisplayExit;
 import simulator.DisplayableObjects.DisplayObject;
 import simulator.DisplayableObjects.DisplayObstacle;
 import simulator.DisplayableObjects.DisplayStage;
+import simulator.DisplayableObjects.DisplayTargetPoint;
 import simulator.DisplayableObjects.DisplayToilet;
 import IO.IO;
 
@@ -73,6 +74,9 @@ public class InputFrame extends JFrame
 			case "Toilet":
 				makeToilet();
 				break;	
+			case "Target Point": 	// ADD: LESLEY
+				makeTargetPoint();	//
+				break;				//
 		}		
 	}
 
@@ -357,6 +361,45 @@ public class InputFrame extends JFrame
 		});		
 		add(leftPane, BorderLayout.WEST);
 		add(rightPane, BorderLayout.CENTER);
+		add(okPane, BorderLayout.SOUTH);
+	}
+	
+	public void makeTargetPoint() // ADD METHOD: LESLEY
+	{
+		setTitle("Create Target Point");
+		setSize(300, 130);
+		final JComponent[] comps = new JComponent[]
+		{
+			new JLabel("Name: "), new JTextField("")
+		};
+		JPanel pane = new JPanel(new GridLayout(1,2));
+		
+		for(JComponent component : comps)
+		{
+			pane.add(component);
+		}
+		
+		JPanel okPane = new JPanel();
+		JButton ok = new JButton("OK");
+		okPane.add(ok);
+		ok.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent e) 
+			{
+				JTextField name = (JTextField) comps[1];
+				if (checkInp.checkString(name.getText()))
+				{
+					DisplayObject o = new DisplayTargetPoint(name.getText(), new Dimension(30,30), false, new Point2D.Double(0,0), "Target Point");			
+					IO.getInstance().saveFestivalObject(o);
+					dispose();	
+				}
+				else
+				{
+					showInputErrorPane();
+				}
+			}
+		});		
+		add(pane, BorderLayout.CENTER);
 		add(okPane, BorderLayout.SOUTH);
 	}
 	

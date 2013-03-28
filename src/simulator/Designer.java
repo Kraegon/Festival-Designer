@@ -2,7 +2,6 @@ package simulator;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,12 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -26,20 +20,12 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import IO.IO;
-
-import simulator.DisplayableObjects.DisplayCatering;
-import simulator.DisplayableObjects.DisplayEntrance;
-import simulator.DisplayableObjects.DisplayExit;
 import simulator.DisplayableObjects.DisplayObject;
-import simulator.DisplayableObjects.DisplayObstacle;
-import simulator.DisplayableObjects.DisplayStage;
-import simulator.DisplayableObjects.DisplayToilet;
 import simulator.playfield.SimulationPanel;
+import IO.IO;
 
 public class Designer extends JFrame {
 	private InputFrame inputFrame;
@@ -77,7 +63,7 @@ public class Designer extends JFrame {
 
 		// Dropdown list
 		String[] DropdownStrings = { "Stage", "Entrance", "Exit", "Catering",
-				"Toilet", "Obstacle" };
+									 "Toilet", "Obstacle", "Target Point" }; // ADD: LESLEY
 		JComboBox<String> dropList = new JComboBox<String>(DropdownStrings);
 		dropList.setSelectedIndex(0);
 		westPanel.add(dropList, BorderLayout.NORTH);

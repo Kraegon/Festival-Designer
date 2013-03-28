@@ -51,8 +51,8 @@ public class DisplayActor extends DisplayObject implements Serializable {
 		return isSolid;
 	}
 
-	public void setTargetLocation(Point point) {
-		targetLocation = new Point2D.Double(point.getX(), point.getY());
+	public void setTargetLocation(Point2D point) { 								// ADD&FIX: LESLEY; Point is now Point2D 
+		targetLocation = new Point2D.Double(point.getX()*4, point.getY()*4);	// HAVE TO MULTIPLY POINTS BY 4			
 	}
 
 	public void drawObject(Graphics2D g) {
@@ -81,7 +81,7 @@ public class DisplayActor extends DisplayObject implements Serializable {
 		 */
 		if (location.getX() > targetLocation.getX() - 20 && location.getX() < targetLocation.getX() + 20 &&
 			location.getY() > targetLocation.getY() - 20 && location.getY() < targetLocation.getY() + 20) {
-			targetLocation = new Point2D.Double((int)Math.floor(Math.random()*1000), (int)Math.floor(Math.random()*1000)); //NEW RANDOM TARGETLOCATION
+			targetLocation = new Point2D.Double((int)Math.floor(Math.random()*3000), (int)Math.floor(Math.random()*3000)); //NEW RANDOM TARGETLOCATION
 		} else {
 			double xT = targetLocation.getX();
 			double yT = targetLocation.getY();

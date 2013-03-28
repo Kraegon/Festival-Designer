@@ -24,6 +24,7 @@ import javax.swing.Timer;
 
 import simulator.DisplayableObjects.DisplayActor;
 import simulator.DisplayableObjects.DisplayObject;
+import simulator.DisplayableObjects.DisplayTargetPoint;
 
 public class SimulationPanel extends JPanel
 {
@@ -169,6 +170,13 @@ public class SimulationPanel extends JPanel
 		for(DisplayObject a : displayObjects)
 		{
 			a.drawObject(g);
+			if (a.getClass() == DisplayTargetPoint.class)		// ADD: LESLEY
+			{													// test for giving actors a targetpoint
+				for (DisplayActor actor : displayActor)			//
+				{												//
+					actor.setTargetLocation(a.getLocation());	//
+				}												//
+			}
 		}
 		arrow.drawObject(g);
 	}
