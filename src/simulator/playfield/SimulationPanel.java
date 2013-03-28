@@ -23,6 +23,7 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import simulator.DisplayableObjects.DisplayActor;
+import simulator.DisplayableObjects.DisplayEntrance;
 import simulator.DisplayableObjects.DisplayObject;
 import simulator.DisplayableObjects.DisplayTargetPoint;
 
@@ -39,15 +40,16 @@ public class SimulationPanel extends JPanel
 	private int focusX;
 	private int focusY;
 	static boolean TargetingMode = false;
+	private boolean entrancePlaced = false;
 	PopupListener popup = new PopupListener();
 	SelectionArrow arrow = new SelectionArrow(0, 0);
 	
 	public SimulationPanel()
 	{
-		double direction = Math.random() * 2 * Math.PI;
-		for (int i = 0; i < 100; i++){
-			displayActor.add(new DisplayActor((new Point2D.Double(50, 50)), direction));
-		}
+		//double direction = Math.random() * 2 * Math.PI;
+		//for (int i = 0; i < 100; i++){
+		//	displayActor.add(new DisplayActor((new Point2D.Double(50, 50)), direction));
+		//}
 
 		displayObjects.addAll(displayActor);
 		
@@ -92,16 +94,33 @@ public class SimulationPanel extends JPanel
 			public void mousePressed(MouseEvent e) {}
 			public void mouseExited(MouseEvent arg0) {}
 			public void mouseEntered(MouseEvent arg0) {isActive = true;}
-			public void mouseClicked(MouseEvent e) {
-				if (TargetingMode == false) {
-					if (selectedObject != null) {
-						if (e.getButton() == MouseEvent.BUTTON1) {
-							selectedObject.setLocation(new Point2D.Double((e
-									.getX() - focusX) / zoom,
-									(e.getY() - focusY) / zoom));
-							displayObjects.add(selectedObject);
-						} else if (e.getButton() == MouseEvent.BUTTON3) {
-
+			public void mouseClicked(MouseEvent e) 
+			{
+				if (TargetingMode == false) 
+				{
+					if (selectedObject != null) 
+					{
+						if (e.getButton() == MouseEvent.BUTTON1) 
+						{
+							if (!(selectedObject.getClass() == DisplayEntrance.class && entrancePlaced)) //ADD: LESLEY (ALLOW ONLY ONE ENTRANCE)
+							{
+								selectedObject.setLocation(new Point2D.Double((e.getX() - focusX) / zoom,(e.getY() - focusY) / zoom));
+								displayObjects.add(selectedObject);
+							}
+							if (selectedObject.getClass() == DisplayEntrance.class && !entrancePlaced)	//ADD: LESLEY
+							{
+								System.out.println("ENTRANCE PLACED");
+								placeActors(selectedObject.getLocation()); // give actors entrance location
+								entrancePlaced = true;
+							}
+							if (selectedObject.getClass() == DisplayTargetPoint.class) 	//ADD: LESLEY
+							{
+								System.out.println("TARGETPOINT PLACED");
+								setTargets((DisplayTargetPoint)selectedObject); // give all actors this target
+							}
+						} 
+						else if (e.getButton() == MouseEvent.BUTTON3) 
+						{
 							popup.show(e, selectedObject);
 						}
 					}
@@ -133,8 +152,7 @@ public class SimulationPanel extends JPanel
 
 								selectedObject.addTarget(a.getName());
 								TargetingMode = false;
-								System.out
-										.println("---------------------------------------");
+								System.out.println("---------------------------------------");
 
 								System.out.println("added target: "
 										+ a.getName());
@@ -143,9 +161,27 @@ public class SimulationPanel extends JPanel
 					}
 				}
 			}
-
 		});
 	}
+	
+	public void placeActors(Point2D point) // ADD: LESLEY
+	{
+		double direction = Math.random() * 2 * Math.PI;
+		
+		for (int i = 0; i < 100; i++)
+		{
+			displayActor.add(new DisplayActor(point, direction));
+		}
+	}
+	
+	public void setTargets(DisplayObject target) // ADD: LESLEY
+	{	
+		for (DisplayActor d : displayActor)
+		{
+			d.addTarget(target);
+		}
+	}
+	
 	public static SimulationPanel getInstance(){
 		if(INSTANCE == null)
 			INSTANCE = new SimulationPanel();
@@ -167,16 +203,12 @@ public class SimulationPanel extends JPanel
 		g.translate(focusX, focusY);
 		g.scale(zoom, zoom);
 		g.setPaint(Color.BLACK);
+		
+		g.drawRect(0, 0, getWidth(), getHeight()); // ADD: LESLEY (VISUAL BOUNDARY)
+		
 		for(DisplayObject a : displayObjects)
 		{
 			a.drawObject(g);
-			if (a.getClass() == DisplayTargetPoint.class)		// ADD: LESLEY
-			{													// test for giving actors a targetpoint
-				for (DisplayActor actor : displayActor)			//
-				{												//
-					actor.setTargetLocation(a.getLocation());	//
-				}												//
-			}
 		}
 		arrow.drawObject(g);
 	}

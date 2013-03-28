@@ -3,12 +3,13 @@ package simulator.DisplayableObjects;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.List;
+
 import javax.swing.ImageIcon;
 
 @SuppressWarnings("serial")
@@ -25,14 +26,16 @@ public class DisplayActor extends DisplayObject implements Serializable {
 	private final static int WIDTH = 16;
 	private final static int HEIGHT = 16;
 	LinkedList<DisplayObject> otherActors;
+	List<DisplayObject> actions = new LinkedList<DisplayObject>(); // ADD: LESLEY
 
-	public DisplayActor(Point2D location, double direction) {
+	public DisplayActor(Point2D location, double direction) 
+	{
 		super("Actor " + id, new Dimension(16, 16), true, location, "actor");
 		id++;
 		this.location = location;
 		this.speed = 10;
 		this.imageActor = new ImageIcon("Data\\Actor.png").getImage();
-		targetLocation = new Point2D.Double(100, 100);
+		targetLocation = location;
 	}
 
 	public Point2D getLocation() {
@@ -53,13 +56,19 @@ public class DisplayActor extends DisplayObject implements Serializable {
 
 	public void setTargetLocation(Point2D point) { 								// ADD&FIX: LESLEY; Point is now Point2D 
 		targetLocation = new Point2D.Double(point.getX()*4, point.getY()*4);	// HAVE TO MULTIPLY POINTS BY 4			
-	}
+	}																			//
 
-	public void drawObject(Graphics2D g) {
+	public void drawObject(Graphics2D g) 
+	{
 		g.scale(0.25, 0.25);
 		g.drawImage(imageActor, getTransformation(), null);
 		g.scale(4, 4);
 	}
+	
+	public void addTarget(DisplayObject d)	// ADD: LESLEY
+	{										//
+		actions.add(d);						//	
+	}										//
 
 	public void update() {
 		// Point2D lastLocation = location;
@@ -79,10 +88,24 @@ public class DisplayActor extends DisplayObject implements Serializable {
 		 * lastLocation; else { location = new Point2D.Double(10 *
 		 * Math.sin(direction), 10 * Math.cos(direction)); }
 		 */
-		if (location.getX() > targetLocation.getX() - 20 && location.getX() < targetLocation.getX() + 20 &&
-			location.getY() > targetLocation.getY() - 20 && location.getY() < targetLocation.getY() + 20) {
-			targetLocation = new Point2D.Double((int)Math.floor(Math.random()*3000), (int)Math.floor(Math.random()*3000)); //NEW RANDOM TARGETLOCATION
-		} else {
+		
+		// IF TARGETLOCATION REACHED
+		if (location.getX() > targetLocation.getX() - 10 && location.getX() < targetLocation.getX() + 10 &&
+			location.getY() > targetLocation.getY() - 10 && location.getY() < targetLocation.getY() + 10) 
+		{
+			try 
+			{	
+				setTargetLocation(actions.get(actions.size()-1).getLocation()); // ADD: LESLEY
+			} 
+			catch (IndexOutOfBoundsException e)
+			{
+				targetLocation =  location;
+			}
+			
+			//targetLocation = new Point2D.Double((int)Math.floor(Math.random()*3000), (int)Math.floor(Math.random()*3000)); //NEW RANDOM TARGETLOCATION
+		} 
+		else 
+		{
 			double xT = targetLocation.getX();
 			double yT = targetLocation.getY();
 			double xL = location.getX();
