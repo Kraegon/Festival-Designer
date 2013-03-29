@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,24 +17,28 @@ public class DisplayActor extends DisplayObject implements Serializable {
 	private Image imageActor;
 	private Point2D location;
 	private Point2D targetLocation;
+	private Point2D lastTargetLocation;
 	private boolean isSolid = true;
 	private double direction;
-	private int speed;
+	private double speed;
+	private double boundary = 5;
 
 	private static int id = 0;
-	private final static int WIDTH = 16;
-	private final static int HEIGHT = 16;
+	private final static int WIDTH = 30;
+	private final static int HEIGHT = 30;
 	LinkedList<DisplayObject> otherActors;
-	List<DisplayObject> actions = new LinkedList<DisplayObject>(); // ADD: LESLEY
+	List<Point2D> actions = new LinkedList<Point2D>();
 
 	public DisplayActor(Point2D location, double direction) 
 	{
 		super("Actor " + id, new Dimension(16, 16), true, location, "actor");
 		id++;
 		this.location = location;
-		this.speed = 10;
+		this.speed = 2 + Math.random() * 2;
 		this.imageActor = new ImageIcon("Data\\Actor.png").getImage();
-		targetLocation = location;
+		addTarget(new Point2D.Double(Math.random() * 600, Math.random() * 600));
+		setTargetLocation(actions.get(0));
+		lastTargetLocation = actions.get(0);
 	}
 
 	public Point2D getLocation() {
@@ -54,90 +57,68 @@ public class DisplayActor extends DisplayObject implements Serializable {
 		return isSolid;
 	}
 
-	public void setTargetLocation(Point2D point) { 								// ADD&FIX: LESLEY; Point is now Point2D 
-		targetLocation = new Point2D.Double(point.getX()*4, point.getY()*4);	// HAVE TO MULTIPLY POINTS BY 4			
-	}																			//
+	public void setTargetLocation(Point2D point) 		
+	{ 																	
+		targetLocation = new Point2D.Double(point.getX(), point.getY());	
+	}																	
 
 	public void drawObject(Graphics2D g) 
 	{
-		g.scale(0.25, 0.25);
 		g.drawImage(imageActor, getTransformation(), null);
-		g.scale(4, 4);
 	}
 	
-	public void addTarget(DisplayObject d)	// ADD: LESLEY
-	{										//
-		actions.add(d);						//	
-	}										//
+	public void addTarget(Point2D p)
+	{									
+		actions.add(p);					
+	}								
 
-	public void update() {
-		// Point2D lastLocation = location;
-		// location = new Point2D.Double(/*getEntranceX(),getEntranceY()*/);
+	public void addRandomTarget()
+	{			
+		addTarget(new Point2D.Double(lastTargetLocation.getX() - 100 + Math.random()*200,
+				 					 lastTargetLocation.getY() - 100 + Math.random()*200));
+	}
+	
+	public void update(List<DisplayActor> otherActors) 
+	{		
+		location = new Point2D.Double(location.getX() + speed * Math.cos(direction), 
+				  					  location.getY() + speed * Math.sin(direction));
 
 		double xD = targetLocation.getX() - location.getX();
 		double yD = targetLocation.getY() - location.getY();
 		double changeAngle = Math.atan2(yD, xD);
 		direction = changeAngle;
-
-		/*
-		 * boolean collisionActor = false; for (DisplayObject displayObject :
-		 * otherActors) { if (displayObject.getClass() == DisplayActor.class) {
-		 * DisplayActor otherActor = (DisplayActor) displayObject; if
-		 * (displayObject == this) continue; if (collision(otherActor))
-		 * collisionActor = true; } } if (collisionActor == true) location =
-		 * lastLocation; else { location = new Point2D.Double(10 *
-		 * Math.sin(direction), 10 * Math.cos(direction)); }
-		 */
-		
-		// IF TARGETLOCATION REACHED
-		if (location.getX() > targetLocation.getX() - 10 && location.getX() < targetLocation.getX() + 10 &&
-			location.getY() > targetLocation.getY() - 10 && location.getY() < targetLocation.getY() + 10) 
-		{
-			try 
-			{	
-				setTargetLocation(actions.get(actions.size()-1).getLocation()); // ADD: LESLEY
-			} 
-			catch (IndexOutOfBoundsException e)
-			{
-				targetLocation =  location;
-			}
 			
-			//targetLocation = new Point2D.Double((int)Math.floor(Math.random()*3000), (int)Math.floor(Math.random()*3000)); //NEW RANDOM TARGETLOCATION
+		// IF TARGETLOCATION REACHED
+		if (location.getX() > targetLocation.getX() - boundary && location.getX() < targetLocation.getX() + boundary &&
+			location.getY() > targetLocation.getY() - boundary && location.getY() < targetLocation.getY() + boundary) 
+		{	
+			actions.remove(0); // REMOVE THE REACHED LOCATION
+			
+			if (!actions.isEmpty())
+			{
+				setTargetLocation(actions.get(0)); // GET NEW TARGETLOCATION FROM LIST
+				lastTargetLocation = actions.get(0);
+			}
+			else
+			{
+				addRandomTarget(); // ADD RANDOM TARGETLOCATION TO LIST
+				setTargetLocation(actions.get(0));
+			} 
 		} 
-		else 
-		{
-			double xT = targetLocation.getX();
-			double yT = targetLocation.getY();
-			double xL = location.getX();
-			double yL = location.getY();
-			if (xL < xT)
-				location.setLocation(x += 10, y);
-			else
-				location.setLocation(x -= 10, y);
-			if (yL < yT)
-				location.setLocation(x, y += 10);
-			else
-				location.setLocation(x, y -= 10);
-		}
 	}
-
-	private boolean collision(DisplayActor displayActor) {
-		double x = displayActor.location.getX() - location.getX();
-		double y = displayActor.location.getY() - location.getY();
-		Rectangle2D.Double rectActor = new Rectangle2D.Double(x, y, WIDTH,
-				HEIGHT);
-		if (rectActor.intersects(rectActor))
-			return false;
-		else
-			return true;
-
-	}
-
+	
 	// a method to transform the direction for an image.
-	private AffineTransform getTransformation() {
+	private AffineTransform getTransformation() 
+	{
 		AffineTransform tx = new AffineTransform();
 		tx.translate(location.getX(), location.getY());
-		tx.rotate(direction + Math.toRadians(90), WIDTH / 2, HEIGHT / 2);
+		tx.rotate(direction + Math.toRadians(90), WIDTH/2, HEIGHT/2+5);
 		return tx;
+	}
+
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
+		
 	}
 }

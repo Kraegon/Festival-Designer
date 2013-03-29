@@ -30,6 +30,7 @@ import simulator.DisplayableObjects.DisplayTargetPoint;
 public class SimulationPanel extends JPanel
 {
 	private static SimulationPanel INSTANCE;
+	private int amountOfActors = 1;
 	private double zoom = 1;
 	private boolean isActive = true;
 	private Rectangle2D field;
@@ -58,7 +59,7 @@ public class SimulationPanel extends JPanel
 					for(DisplayObject a : displayObjects)
 						a.update();
 					for(DisplayActor a : displayActor)		//ADD: LESLEY
-						a.update();
+						a.update(displayActor);
 				}
 			}
 		});
@@ -126,7 +127,7 @@ public class SimulationPanel extends JPanel
 							{                                                                                                                   //ADD: LESLEY
 								System.out.println("ENTRANCE PLACED");                                                                          //ADD: LESLEY
 								// give actors entrance location                                                                                //ADD: LESLEY
-								placeActors(new Point2D.Double(selectedObject.getLocation().getX()*4, selectedObject.getLocation().getY()*4));  //ADD: LESLEY
+								placeActors(new Point2D.Double(selectedObject.getLocation().getX(), selectedObject.getLocation().getY()));  //ADD: LESLEY
 								entrancePlaced = true;                                                                                          //ADD: LESLEY
 							}                                                                                                                   //ADD: LESLEY
 							// SET TARGETPOINTS                                                                                                 //ADD: LESLEY
@@ -183,10 +184,9 @@ public class SimulationPanel extends JPanel
 	
 	public void placeActors(Point2D point) // ADD: LESLEY
 	{
-		double direction = Math.random() * 2 * Math.PI;
-		
-		for (int i = 0; i < 100; i++)
+		for (int i = 0; i < amountOfActors; i++)
 		{
+			double direction = Math.random() * 2 * Math.PI;
 			displayActor.add(new DisplayActor(point, direction));
 		}
 	}
@@ -195,7 +195,7 @@ public class SimulationPanel extends JPanel
 	{	
 		for (DisplayActor d : displayActor)
 		{
-			d.addTarget(target);
+			d.addTarget(target.getLocation());
 		}
 	}
 	
