@@ -40,8 +40,8 @@ public class SelectionArrow
 	{
 		g2.setColor(Color.RED);;
 		Rectangle2D r = new Rectangle2D.Double(x-20/2, y-20/2, 20, 20);
-		Line2D lx = new Line2D.Double(-1000, y, 1000, y);
-		Line2D ly = new Line2D.Double(x, -1000, x, 1000);
+		Line2D lx = new Line2D.Double(-10000, y, 10000, y);                 //ADD: LESLEY (CHANGED 1000 to 10000)
+		Line2D ly = new Line2D.Double(x, -10000, x, 10000);                 //ADD: LESLEY (CHANGED 1000 to 10000)
 		g2.draw(r);
 		g2.draw(ly);
 		g2.draw(lx);

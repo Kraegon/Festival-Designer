@@ -106,7 +106,6 @@ public class DisplayActor extends DisplayObject implements Serializable {
 		} 
 		else 
 		{
-			System.out.println("TARGET: " + targetLocation.toString() + " LOCATION: " + location.toString());
 			double xT = targetLocation.getX();
 			double yT = targetLocation.getY();
 			double xL = location.getX();
