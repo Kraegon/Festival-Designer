@@ -50,14 +50,14 @@ public class SimulationPanel extends JPanel
 		//for (int i = 0; i < 100; i++){
 		//	displayActor.add(new DisplayActor((new Point2D.Double(50, 50)), direction));
 		//}
-
-		displayObjects.addAll(displayActor);
 		
 		Timer t = new Timer(1000/60, new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if(isActive){				
+				if(isActive) {				
 					repaint();	
 					for(DisplayObject a : displayObjects)
+						a.update();
+					for(DisplayActor a : displayActor)		//ADD: LESLEY
 						a.update();
 				}
 			}
@@ -110,7 +110,7 @@ public class SimulationPanel extends JPanel
 							if (selectedObject.getClass() == DisplayEntrance.class && !entrancePlaced)	//ADD: LESLEY
 							{
 								System.out.println("ENTRANCE PLACED");
-								placeActors(selectedObject.getLocation()); // give actors entrance location
+								placeActors(new Point2D.Double(selectedObject.getLocation().getX()*4, selectedObject.getLocation().getY()*4)); // give actors entrance location
 								entrancePlaced = true;
 							}
 							if (selectedObject.getClass() == DisplayTargetPoint.class) 	//ADD: LESLEY
@@ -206,7 +206,13 @@ public class SimulationPanel extends JPanel
 		
 		g.drawRect(0, 0, getWidth(), getHeight()); // ADD: LESLEY (VISUAL BOUNDARY)
 		
+		//DRAW OBJECTS
 		for(DisplayObject a : displayObjects)
+		{
+			a.drawObject(g);
+		}
+		//DRAW ACTORS // ADD: LESLEY
+		for(DisplayActor a : displayActor)
 		{
 			a.drawObject(g);
 		}

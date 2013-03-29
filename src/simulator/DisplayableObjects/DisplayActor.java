@@ -106,6 +106,7 @@ public class DisplayActor extends DisplayObject implements Serializable {
 		} 
 		else 
 		{
+			System.out.println("TARGET: " + targetLocation.toString() + " LOCATION: " + location.toString());
 			double xT = targetLocation.getX();
 			double yT = targetLocation.getY();
 			double xL = location.getX();
@@ -137,7 +138,7 @@ public class DisplayActor extends DisplayObject implements Serializable {
 	private AffineTransform getTransformation() {
 		AffineTransform tx = new AffineTransform();
 		tx.translate(location.getX(), location.getY());
-		tx.rotate(direction + Math.toRadians(90), WIDTH * 2, HEIGHT * 2);
+		tx.rotate(direction + Math.toRadians(90), WIDTH / 2, HEIGHT / 2);
 		return tx;
 	}
 }
