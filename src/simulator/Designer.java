@@ -2,7 +2,8 @@ package simulator;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -54,6 +55,7 @@ public class Designer extends JFrame {
 		contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
 		setLocation(new Point(100, 100));
 		setSize(800, 600);
+		setMinimumSize(new Dimension(800, 600)); //ADD: LESLEY
 
 		westPanel.setLayout(new BorderLayout(20, 20));
 		westPanel.add(objectHolder, BorderLayout.CENTER);
@@ -95,18 +97,33 @@ public class Designer extends JFrame {
 		setVisible(true);
 		
 		// east
-		JPanel timePanel = new JPanel(new FlowLayout());
+		JPanel timePanel = new JPanel(new GridLayout(2, 1, 0, 400));
 		final JButton startButton = new JButton("START");
 		startButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Clock.getInstance().toggle();
-				if(startButton.getText().equals("STOP"))
-					startButton.setText("START");
-				else
-					startButton.setText("STOP");
+				if(startButton.getText().equals("STOP"))      //ADD: LESLEY
+				{       									  //ADD: LESLEY
+					centerPanel.stopTimer();				  //ADD: LESLEY
+					startButton.setText("START");             //ADD: LESLEY
+				}                                             //ADD: LESLEY
+				else                                          //ADD: LESLEY
+				{  											  //ADD: LESLEY
+					centerPanel.startTimer();			      //ADD: LESLEY
+					startButton.setText("STOP");              //ADD: LESLEY
+				}                                             //ADD: LESLEY
 			}
 		});
 		timePanel.add(startButton);
+		
+		final JButton addVisitor = new JButton("Add Visitor");
+		addVisitor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				centerPanel.addActor();
+			}
+		});
+		timePanel.add(startButton);
+		timePanel.add(addVisitor);
 		contentPane.add(timePanel, BorderLayout.EAST);
 	}
 
@@ -194,8 +211,8 @@ public class Designer extends JFrame {
 				if (value.equals(d.getName())) {
 					southLabel.setText(d.toString());
 					SimulationPanel.getInstance().setSelectedObject(d);
-					centerPanel.setArrow(d.getLocation().getX(), d
-							.getLocation().getY());
+					centerPanel.setArrow(d.getLocation().getX(), d.getLocation().getY());
+					centerPanel.repaintTimerOff(); // ADD: LESLEY
 				}
 			}
 		}

@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.TexturePaint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -44,8 +46,12 @@ public class SimulationPanel extends JPanel
 	private int focusY;
 	static boolean TargetingMode = false;
 	private boolean entrancePlaced = false;
-	PopupListener popup = new PopupListener();
+	private boolean firstTargetPlaced = false;
+	Timer t;										// ADD: LESLEY
+	PopupListener popup = new PopupListener(this);
 	SelectionArrow arrow = new SelectionArrow(0, 0);
+	DisplayTargetPoint firstTarget;
+	Point2D entranceLocation = null;
 	
 	public SimulationPanel()
 	{
@@ -54,18 +60,16 @@ public class SimulationPanel extends JPanel
 		//	displayActor.add(new DisplayActor((new Point2D.Double(50, 50)), direction));
 		//}
 		
-		Timer t = new Timer(1000/60, new ActionListener() {
+		t = new Timer(1000/60, new ActionListener() {     	// ADD: LESLEY
 			public void actionPerformed(ActionEvent arg0) {
-				if(isActive) {				
-					repaint();	
-					for(DisplayObject a : displayObjects)
-						a.update();
-					for(DisplayActor a : displayActor)		//ADD: LESLEY
-						a.update(displayActor);
+				if(isActive) {
+					repaint();
+					updateObjects();
+					updateActors();
 				}
 			}
 		});
-		t.start();
+		//t.start();
 		addMouseWheelListener(new MouseWheelListener() {
 			public void mouseWheelMoved(MouseWheelEvent e) {
 				int modifier = e.getWheelRotation();
@@ -73,6 +77,10 @@ public class SimulationPanel extends JPanel
 					zoom += 0.03;
 				else if(zoom > 1)
 					zoom -= 0.03;
+				if (!(t.isRunning()))	// ADD: LESLEY
+				{
+					repaint();
+				}
 			}
 		});
 		addMouseMotionListener(new MouseMotionListener() {
@@ -90,6 +98,10 @@ public class SimulationPanel extends JPanel
 				else if((e.getPoint().getY() > lastPoint.getY()))
 					focusY += 2;
 				lastPoint = e.getPoint();
+				if (!(t.isRunning()))	// ADD: LESLEY
+				{
+					repaint();
+				}
 			}
 		});
 		addMouseListener(new MouseListener() {
@@ -110,33 +122,42 @@ public class SimulationPanel extends JPanel
 							{
 								selectedObject.setLocation(new Point2D.Double((e.getX() - focusX) / zoom,(e.getY() - focusY) / zoom));
 								
-								// AVOID DUPLICATES IN displayObjects:List 				// ADD: LESLEY
-								boolean addToList = true;								// ADD: LESLEY
-								for (DisplayObject d : displayObjects)					// ADD: LESLEY
-								{														// ADD: LESLEY
-									if (d.getName().equals(selectedObject.getName()))	// ADD: LESLEY
-									{													// ADD: LESLEY
-										addToList = false;								// ADD: LESLEY
-									}													// ADD: LESLEY
-								}														// ADD: LESLEY
-								if (addToList)											// ADD: LESLEY
-								{														// ADD: LESLEY
-									displayObjects.add(selectedObject);					// ADD: LESLEY
-								}														// ADD: LESLEY
-							}															// ADD: LESLEY
-							// FIRST ENTRANCE?
+								// AVOID DUPLICATES IN displayObjects:List 				                                                        //ADD: LESLEY
+								boolean addToList = true;								                                                        //ADD: LESLEY
+								for (DisplayObject d : displayObjects)					                                                        //ADD: LESLEY
+								{														                                                        //ADD: LESLEY
+									if (d.getName().equals(selectedObject.getName()))	                                                        //ADD: LESLEY
+									{													                                                        //ADD: LESLEY
+										addToList = false;								                                                        //ADD: LESLEY
+									}													                                                        //ADD: LESLEY
+								}														                                                        //ADD: LESLEY
+								if (addToList)											                                                        //ADD: LESLEY
+								{														                                                        //ADD: LESLEY
+									displayObjects.add(selectedObject);					                                                        //ADD: LESLEY
+								}														                                                        //ADD: LESLEY
+							}															                                                        //ADD: LESLEY
+							// FIRST ENTRANCE?                                                                                                  //ADD: LESLEY
 							if (selectedObject.getClass() == DisplayEntrance.class && !entrancePlaced)											//ADD: LESLEY
 							{                                                                                                                   //ADD: LESLEY
 								System.out.println("ENTRANCE PLACED");                                                                          //ADD: LESLEY
-								// give actors entrance location                                                                                //ADD: LESLEY
-								placeActors(new Point2D.Double(selectedObject.getLocation().getX(), selectedObject.getLocation().getY()));  //ADD: LESLEY
+								entranceLocation = new Point2D.Double(selectedObject.getLocation().getX(), selectedObject.getLocation().getY()); //ADD: LESLEY
 								entrancePlaced = true;                                                                                          //ADD: LESLEY
 							}                                                                                                                   //ADD: LESLEY
 							// SET TARGETPOINTS                                                                                                 //ADD: LESLEY
-							if (selectedObject.getClass() == DisplayTargetPoint.class) 	//ADD: LESLEY                                           //ADD: LESLEY
-							{                                                                                                                   //ADD: LESLEY
+							if (selectedObject.getClass() == DisplayTargetPoint.class)                                       					//ADD: LESLEY
+							{     																												//ADD: LESLEY
 								System.out.println("TARGETPOINT PLACED");                                                                       //ADD: LESLEY
-								setTargets((DisplayTargetPoint)selectedObject); // give all actors this target                                  //ADD: LESLEY
+								if (selectedObject.getName().equals("FIRST_TARGET"))															//ADD: LESLEY
+								{																												//ADD: LESLEY
+									firstTarget = (DisplayTargetPoint)selectedObject;    														//ADD: LESLEY
+									firstTargetPlaced = true;																					//ADD: LESLEY
+								}																												//ADD: LESLEY
+							}                                                                                                                   //ADD: LESLEY
+							// UPDATE OBJECTS ONLY WHEN TIMER IS NOT RUNNING                                                                    //ADD: LESLEY
+							if (!(t.isRunning()))	// ADD: LESLEY                                                                              //ADD: LESLEY
+							{                                                                                                                   //ADD: LESLEY
+								repaint();                                                                                                      //ADD: LESLEY
+								updateObjects();                                                                                                //ADD: LESLEY
 							}                                                                                                                   //ADD: LESLEY
 						}                                                                                                                       //ADD: LESLEY
 						else if (e.getButton() == MouseEvent.BUTTON3) 
@@ -183,23 +204,27 @@ public class SimulationPanel extends JPanel
 			}
 		});
 	}
+	public void placeActors(Point2D point) 	//ADD: LESLEY
+	{                                                                              
+		for (int i = 0; i < amountOfActors; i++)                                   
+		{                                                                          
+			double direction = Math.random() * 2 * Math.PI;                        
+			displayActor.add(new DisplayActor(point, direction, firstTarget));     
+		}                                                                          
+	}                                                                              
 	
-	public void placeActors(Point2D point) // ADD: LESLEY
-	{
-		for (int i = 0; i < amountOfActors; i++)
+	public void addActor()                                         
+	{                                                                                                                                                       
+		if (entranceLocation == null || !firstTargetPlaced)
+		{
+			JOptionPane.showMessageDialog(null, "Add an entrance and targetLocation named 'FIRST_TARGET' before you place actors on the stage");
+		}
+		else
 		{
 			double direction = Math.random() * 2 * Math.PI;
-			displayActor.add(new DisplayActor(point, direction));
-		}                                                                           
-	}                                                                               
-	                                                                                
-	public void setTargets(DisplayObject target) // ADD: LESLEY                     
-	{	                                                                            
-		for (DisplayActor d : displayActor)                                         
-		{                                                                           
-			d.addTarget(target.getLocation());                                      
-		}                                                                           
-	}                                                                               
+			displayActor.add(new DisplayActor(entranceLocation, direction, firstTarget));   
+		}
+	}   
 	                                                                                
 	public static SimulationPanel getInstance(){                                    
 		if(INSTANCE == null)                                                        
@@ -213,8 +238,10 @@ public class SimulationPanel extends JPanel
 		isActive = !isActive;
 	}
 	
-	public void paintComponent(Graphics gTemp){
+	public void paintComponent(Graphics gTemp)
+	{
 		Graphics2D g = (Graphics2D) gTemp;
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); //ADD: LESLEY
 		try {
 			g.setPaint(new TexturePaint(ImageIO.read(new File("Data\\grass.png")), new Rectangle2D.Double(focusX, focusY, 256 * zoom, 256 * zoom)));
 			g.fill(new Rectangle2D.Double(0,0,getWidth(),getHeight()));
@@ -226,14 +253,14 @@ public class SimulationPanel extends JPanel
 		g.scale(zoom, zoom);
 		g.setPaint(Color.BLACK);
 		
-		g.drawRect(0, 0, getWidth(), getHeight()); 	// ADD: LESLEY (VISUAL BOUNDARY)
+		g.drawRect(0, 0, getWidth(), getHeight()); 
 		
 		//DRAW OBJECTS
 		for(DisplayObject a : displayObjects)
 		{
 			a.drawObject(g);
 		}
-		//DRAW ACTORS 								// ADD: LESLEY
+		//DRAW ACTORS 						
 		for(DisplayActor a : displayActor)
 		{
 			a.drawObject(g);
@@ -247,6 +274,40 @@ public class SimulationPanel extends JPanel
 		arrow.setY(y);
 	}
 	
+	public void repaintTimerOff() 	 // ADD: LESLEY
+	{    
+		if (!(t.isRunning()))
+		{
+			repaint();
+			updateObjects();
+		}               
+	} 
+	
+	public void updateObjects() 	 // ADD: LESLEY
+	{    
+		for(DisplayObject a : displayObjects)
+			a.update();                
+	}      
+	
+	public void updateActors() 		 // ADD: LESLEY
+	{    
+		for(DisplayActor a : displayActor)	
+			a.update(displayActor);                
+	}   
+	
+	public void stopTimer() {      // ADD: LESLEY
+		t.stop();               
+	}                             
+	public void startTimer() {     // ADD: LESLEY
+		if (entranceLocation == null || !firstTargetPlaced)
+		{
+			JOptionPane.showMessageDialog(null, "Add an entrance and targetLocation named 'FIRST_TARGET' before you place actors on the stage");
+		}
+		else
+		{
+			t.start(); 
+		}
+	}                        
 	public DisplayObject getSelectedObject() {
 		return SimulationPanel.selectedObject;
 	}
