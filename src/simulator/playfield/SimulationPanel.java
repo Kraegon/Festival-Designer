@@ -2,6 +2,7 @@ package simulator.playfield;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.TexturePaint;
@@ -26,11 +27,12 @@ import simulator.DisplayableObjects.DisplayActor;
 import simulator.DisplayableObjects.DisplayEntrance;
 import simulator.DisplayableObjects.DisplayObject;
 import simulator.DisplayableObjects.DisplayTargetPoint;
+import simulator.clock.Clock;
 
 public class SimulationPanel extends JPanel
 {
 	private static SimulationPanel INSTANCE;
-	private int amountOfActors = 1;
+	private int amountOfActors = 10;
 	private double zoom = 1;
 	private boolean isActive = true;
 	private Rectangle2D field;
@@ -188,26 +190,26 @@ public class SimulationPanel extends JPanel
 		{
 			double direction = Math.random() * 2 * Math.PI;
 			displayActor.add(new DisplayActor(point, direction));
-		}
-	}
-	
-	public void setTargets(DisplayObject target) // ADD: LESLEY
-	{	
-		for (DisplayActor d : displayActor)
-		{
-			d.addTarget(target.getLocation());
-		}
-	}
-	
-	public static SimulationPanel getInstance(){
-		if(INSTANCE == null)
-			INSTANCE = new SimulationPanel();
-		return INSTANCE;
-	}
-	public boolean isActive() {
-		return isActive;
-	}
-	public void toggleActive() {
+		}                                                                           
+	}                                                                               
+	                                                                                
+	public void setTargets(DisplayObject target) // ADD: LESLEY                     
+	{	                                                                            
+		for (DisplayActor d : displayActor)                                         
+		{                                                                           
+			d.addTarget(target.getLocation());                                      
+		}                                                                           
+	}                                                                               
+	                                                                                
+	public static SimulationPanel getInstance(){                                    
+		if(INSTANCE == null)                                                        
+			INSTANCE = new SimulationPanel();                                       
+		return INSTANCE;                                                            
+	}                                                                               
+	public boolean isActive() {                                                     
+		return isActive;                                                            
+	}                                                                               
+	public void toggleActive() {                                                    
 		isActive = !isActive;
 	}
 	
@@ -217,6 +219,9 @@ public class SimulationPanel extends JPanel
 			g.setPaint(new TexturePaint(ImageIO.read(new File("Data\\grass.png")), new Rectangle2D.Double(focusX, focusY, 256 * zoom, 256 * zoom)));
 			g.fill(new Rectangle2D.Double(0,0,getWidth(),getHeight()));
 		} catch (IOException e) {}//Ain't gonna happen unless you don't have grass.png
+		g.setPaint(Color.BLACK);
+		g.setFont(new Font("Consolas", Font.PLAIN, 25));
+		g.drawString(Clock.getInstance().toString(), getWidth() - 125, 25);
 		g.translate(focusX, focusY);
 		g.scale(zoom, zoom);
 		g.setPaint(Color.BLACK);

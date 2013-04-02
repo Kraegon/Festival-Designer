@@ -2,6 +2,7 @@ package simulator;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -24,6 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import simulator.DisplayableObjects.DisplayObject;
+import simulator.clock.Clock;
 import simulator.playfield.SimulationPanel;
 import IO.IO;
 
@@ -90,6 +93,21 @@ public class Designer extends JFrame {
 		setContentPane(contentPane);
 		setLocation(new Point(100, 100));
 		setVisible(true);
+		
+		// east
+		JPanel timePanel = new JPanel(new FlowLayout());
+		final JButton startButton = new JButton("START");
+		startButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Clock.getInstance().toggle();
+				if(startButton.getText().equals("STOP"))
+					startButton.setText("START");
+				else
+					startButton.setText("STOP");
+			}
+		});
+		timePanel.add(startButton);
+		contentPane.add(timePanel, BorderLayout.EAST);
 	}
 
 	private void makeMenuBar() {

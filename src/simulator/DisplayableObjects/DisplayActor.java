@@ -74,8 +74,8 @@ public class DisplayActor extends DisplayObject implements Serializable {
 
 	public void addRandomTarget()
 	{			
-		addTarget(new Point2D.Double(lastTargetLocation.getX() - 100 + Math.random()*200,
-				 					 lastTargetLocation.getY() - 100 + Math.random()*200));
+		addTarget(new Point2D.Double(lastTargetLocation.getX() - 75 + Math.random()*150,	// CHANGE: LESLEY
+				 					 lastTargetLocation.getY() - 75 + Math.random()*150));  // CHANGE: LESLEY
 	}
 	
 	public void update(List<DisplayActor> otherActors) 
