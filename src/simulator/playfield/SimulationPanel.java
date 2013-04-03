@@ -30,6 +30,7 @@ import simulator.DisplayableObjects.DisplayEntrance;
 import simulator.DisplayableObjects.DisplayObject;
 import simulator.DisplayableObjects.DisplayTargetPoint;
 import simulator.clock.Clock;
+import IO.IO;
 
 public class SimulationPanel extends JPanel
 {
@@ -59,7 +60,13 @@ public class SimulationPanel extends JPanel
 		//for (int i = 0; i < 100; i++){
 		//	displayActor.add(new DisplayActor((new Point2D.Double(50, 50)), direction));
 		//}
-		
+		//ADD VANAF HIER
+		String startTime = IO.getInstance().getFestival().getStartTime();
+		if(startTime.length() == 4)
+			Clock.getInstance().setStartTime(Integer.parseInt(startTime.substring(0, 1)) * 3600 + Integer.parseInt(startTime.substring(2, 4)) * 60);
+		else
+			Clock.getInstance().setStartTime(Integer.parseInt(startTime.substring(0, 2)) * 3600 + Integer.parseInt(startTime.substring(3, 5)) * 60);
+		//TOT HIER -- JULIAN
 		t = new Timer(1000/60, new ActionListener() {     	// ADD: LESLEY
 			public void actionPerformed(ActionEvent arg0) {
 				if(isActive) {
@@ -140,7 +147,7 @@ public class SimulationPanel extends JPanel
 							if (selectedObject.getClass() == DisplayEntrance.class && !entrancePlaced)											//ADD: LESLEY
 							{                                                                                                                   //ADD: LESLEY
 								System.out.println("ENTRANCE PLACED");                                                                          //ADD: LESLEY
-								entranceLocation = new Point2D.Double(selectedObject.getLocation().getX(), selectedObject.getLocation().getY()); //ADD: LESLEY
+								entranceLocation = new Point2D.Double(selectedObject.getLocation().getX(), selectedObject.getLocation().getY());//ADD: LESLEY
 								entrancePlaced = true;                                                                                          //ADD: LESLEY
 							}                                                                                                                   //ADD: LESLEY
 							// SET TARGETPOINTS                                                                                                 //ADD: LESLEY
@@ -162,7 +169,16 @@ public class SimulationPanel extends JPanel
 						}                                                                                                                       //ADD: LESLEY
 						else if (e.getButton() == MouseEvent.BUTTON3) 
 						{
-							popup.show(e, selectedObject, displayObjects);
+							//VANAF HIER
+							DisplayObject underlying = null;
+							for(DisplayObject o : displayObjects){
+								Rectangle2D bounds = new Rectangle2D.Double(o.getX(), o.getY(), o.getSize().getWidth(), o.getSize().getHeight());
+								if(bounds.contains((e.getX() - focusX) / zoom, (e.getY() - focusY) / zoom))
+									underlying = o;
+							}
+							if(underlying != null)
+								popup.show(e, underlying, displayObjects);
+							//TOT HIER --JULIAN
 						}
 					}
 				} else {

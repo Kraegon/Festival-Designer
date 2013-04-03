@@ -29,7 +29,6 @@ public class DisplayStage extends DisplayObject implements Serializable
 		g.setPaint(Color.CYAN);	
 		Rectangle2D obstacle = new Rectangle2D.Double(location.getX(), location.getY(),
 				  									  size.getWidth(), size.getHeight());
-		System.out.println(location);
 		bounds = obstacle;
 		g.fill(obstacle);
 		g.setPaint(Color.BLACK);

@@ -116,8 +116,8 @@ public class Clock {
 	 */
 	public String toString(){
 		int hours = (int) Math.floor((time + startTime) / 3600);
-		int minutes = (int) Math.floor((time % 3600) / 60);
-		int seconds = (int) ((time % 3600) % 60);
+		int minutes = (int) Math.floor(((time + startTime) % 3600) / 60);
+		int seconds = (int) (((time + startTime) % 3600) % 60);
 		if(minutes < 10 && seconds < 10)
 			return "[" + hours + ":0" + minutes + ":0" + seconds + "]";
 		else if(minutes < 10 && seconds >= 10)
