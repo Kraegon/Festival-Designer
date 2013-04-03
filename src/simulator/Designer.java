@@ -62,7 +62,6 @@ public class Designer extends JFrame {
 		objectHolder.setBackground(Color.WHITE);
 		objectHolder.setBorder(BorderFactory.createTitledBorder("Objects"));
 		objectList.addMouseListener(new MyMouseListener());
-		// refresh();
 
 		contentPane.add(westPanel, BorderLayout.WEST);
 
@@ -97,7 +96,7 @@ public class Designer extends JFrame {
 		setVisible(true);
 		
 		// east
-		JPanel timePanel = new JPanel(new GridLayout(2, 1, 0, 400));
+		JPanel timePanel = new JPanel(new GridLayout(3, 1, 0, 200));
 		final JButton startButton = new JButton("START");
 		startButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -114,7 +113,29 @@ public class Designer extends JFrame {
 				}                                             //ADD: LESLEY
 			}
 		});
-		timePanel.add(startButton);
+		JPanel changePanel = new JPanel(new BorderLayout());
+		JButton increase = new JButton("+");
+		increase.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Clock.getInstance().setSpeed(Clock.getInstance().getSpeed() / 5);
+			}
+		});
+		JButton reset = new JButton("reset");
+		reset.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Clock.getInstance().setSpeed(1000);
+			}
+		});
+		JButton decrease = new JButton("-");
+		decrease.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Clock.getInstance().setSpeed(Clock.getInstance().getSpeed() * 5);
+			}
+		});
+		changePanel.add(decrease, BorderLayout.WEST);
+		changePanel.add(reset, BorderLayout.CENTER);
+		changePanel.add(increase, BorderLayout.EAST);
+		
 		
 		final JButton addVisitor = new JButton("Add Visitor");
 		addVisitor.addActionListener(new ActionListener() {
@@ -123,6 +144,7 @@ public class Designer extends JFrame {
 			}
 		});
 		timePanel.add(startButton);
+		timePanel.add(changePanel);
 		timePanel.add(addVisitor);
 		contentPane.add(timePanel, BorderLayout.EAST);
 	}

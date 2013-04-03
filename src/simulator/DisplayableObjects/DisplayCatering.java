@@ -14,7 +14,7 @@ public class DisplayCatering extends DisplayObject implements Serializable
 	
 	public DisplayCatering(String name, Dimension size, boolean isSolid, Point2D location, String type)
 	{
-		super(name, size, isSolid, location, "Catering");
+		super(name, size, true, location, "Catering");
 	}
 
 	/**

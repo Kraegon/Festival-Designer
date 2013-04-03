@@ -8,6 +8,7 @@ public class Clock {
 	
 	private int startTime;
 	private int time; //total in seconds
+	private int elapseSpeed = 1000;
 	private TimeElapse absoluteTimeCoreRuler;
 	
 	public Clock(){
@@ -58,9 +59,19 @@ public class Clock {
 	 * The smaller the number the faster, a speed of 1000 is real time and negative numbers are unacceptable.
 	 */
 	public void setSpeed(int elapseSpeed){
-		if(elapseSpeed < 0)
-			elapseSpeed = 0;
+		if(elapseSpeed < 1)
+			elapseSpeed = 1;
+		if(elapseSpeed > 5000)
+			elapseSpeed = 5000;
+		this.elapseSpeed = elapseSpeed;
 		absoluteTimeCoreRuler.setSpeed(elapseSpeed);
+	}
+	/**
+	 * Get the current speed at which time elapses.
+	 * @return : Elapse speed.
+	 */
+	public int getSpeed(){
+		return elapseSpeed;
 	}
 	/**
 	 * Toggle running/not running.
@@ -79,7 +90,7 @@ public class Clock {
 	 */
 	public void incrementTime(){
 		time++;
-		time %= 86400;
+		time %= 86400 - startTime;
 	}
 	/**
 	 * Decreases time until it reaches 0.

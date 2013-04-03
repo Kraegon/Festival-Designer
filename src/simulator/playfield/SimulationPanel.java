@@ -66,16 +66,23 @@ public class SimulationPanel extends JPanel
 			Clock.getInstance().setStartTime(Integer.parseInt(startTime.substring(0, 1)) * 3600 + Integer.parseInt(startTime.substring(2, 4)) * 60);
 		else
 			Clock.getInstance().setStartTime(Integer.parseInt(startTime.substring(0, 2)) * 3600 + Integer.parseInt(startTime.substring(3, 5)) * 60);
+		Repainter painter = new Repainter(this);
+		painter.start();
 		//TOT HIER -- JULIAN
-		t = new Timer(1000/60, new ActionListener() {     	// ADD: LESLEY
+		t = new Timer(1, new ActionListener() {     	// ADD: LESLEY
 			public void actionPerformed(ActionEvent arg0) {
 				if(isActive) {
-					repaint();
 					updateObjects();
 					updateActors();
 				}
+				try {
+					Thread.sleep(Clock.getInstance().getSpeed()/60);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		});
+		
 		//t.start();
 		addMouseWheelListener(new MouseWheelListener() {
 			public void mouseWheelMoved(MouseWheelEvent e) {
@@ -186,7 +193,7 @@ public class SimulationPanel extends JPanel
 					if (e.getButton() == MouseEvent.BUTTON1) {
 						// loop de array door of er een toe te voegen object is.
 						for (DisplayObject a : displayObjects) {
-
+							
 							Point2D mouse = e.getPoint();
 							// System.out.println("mouse: " + mouse);
 							Point2D object = a.getLocation();
@@ -264,7 +271,7 @@ public class SimulationPanel extends JPanel
 		} catch (IOException e) {}//Ain't gonna happen unless you don't have grass.png
 		g.setPaint(Color.BLACK);
 		g.setFont(new Font("Consolas", Font.PLAIN, 25));
-		g.drawString(Clock.getInstance().toString(), getWidth() - 125, 25);
+		g.drawString(Clock.getInstance().toString(), getWidth() - 140, 25);
 		g.translate(focusX, focusY);
 		g.scale(zoom, zoom);
 		g.setPaint(Color.BLACK);
@@ -335,5 +342,24 @@ public class SimulationPanel extends JPanel
 	}
 	public static void setTargetingMode(boolean targetingMode) {
 		TargetingMode = targetingMode;
+	}
+}
+
+/**
+ * Gehele klasse toevoegen
+ * @author Julian G. West
+ */
+class Repainter extends Thread implements Runnable{
+	JPanel source;
+	public Repainter(JPanel source){
+		this.source = source;
+	}
+	public void run(){
+		while(true){
+			source.repaint();
+			try {
+				Thread.sleep(1000/30);
+			} catch (InterruptedException e) {}
+		}
 	}
 }

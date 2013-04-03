@@ -21,7 +21,7 @@ public class DisplayStage extends DisplayObject implements Serializable
 	
 	public DisplayStage(String name, Dimension size, boolean isSolid, Point2D location, String type, Stage attributedStage)
 	{
-		super(name, size, isSolid, location, "Stage");
+		super(name, size, true, location, "Stage");
 		this.attributedStage = attributedStage;
 	}
 
@@ -35,10 +35,9 @@ public class DisplayStage extends DisplayObject implements Serializable
 		g.draw(obstacle);
 		g.setFont(new Font("Consolas", Font.PLAIN, 15));
 		g.drawString(attributedStage.getName(), (int) location.getX() + 5, (int) location.getY() + 15);
-	}
-	public void update() {
 		
 	}
+	public void update() {}
 	
 	public void setStage(Stage attributedStage){
 		this.attributedStage = attributedStage;
