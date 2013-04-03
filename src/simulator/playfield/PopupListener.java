@@ -15,6 +15,7 @@ import javax.swing.JPopupMenu;
 
 import simulator.Designer;
 import simulator.DisplayableObjects.DisplayObject;
+import simulator.DisplayableObjects.DisplayStage;
 import simulator.DisplayableObjects.DisplayTargetPoint;
 
 class PopupListener extends MouseAdapter // ADD: LESLEY (fixed actionlisteners and added remove option)
@@ -29,6 +30,8 @@ class PopupListener extends MouseAdapter // ADD: LESLEY (fixed actionlisteners a
 	JMenuItem size = new JMenuItem("  Change Size");
 	JMenuItem remove = new JMenuItem("  Remove from field");
 	JMenuItem addNeighbour = new JMenuItem("  Add Neighbour");	//ADD: LESLEY
+	JMenuItem setStage = new JMenuItem("  Set Stage");			//ADD: LESLEY
+	JMenuItem toggleExit = new JMenuItem("  Toggle Exit");			//ADD: LESLEY
 
 	public PopupListener(SimulationPanel sim) {
 		// jesper 19-3
@@ -37,10 +40,10 @@ class PopupListener extends MouseAdapter // ADD: LESLEY (fixed actionlisteners a
 		//popup.add(size); 			// Changing size is not important at this time
 		popup.add(remove);
 		popup.add(addNeighbour);	// ADD: LESLEY
-		popup.add(menuItem);
+		popup.add(setStage);
+		popup.add(toggleExit);
+		//popup.add(menuItem);
 		this.simPanel = sim;
-		
-		addNeighbour.setEnabled(false);
 		
 		menuItem.addActionListener(new ActionListener() 
 		{
@@ -103,15 +106,66 @@ class PopupListener extends MouseAdapter // ADD: LESLEY (fixed actionlisteners a
 				simPanel.repaintTimerOff();
 			}
 		});
+		
+		setStage.addActionListener(new ActionListener() // ADD:LESLEY
+		{
+			@Override
+			public void actionPerformed(ActionEvent action) 
+			{
+				String givenTarget = JOptionPane.showInputDialog("Enter the name of the Stage you want to link to this targetPoint:");
+				DisplayTargetPoint target = (DisplayTargetPoint) selectedObject;
+				boolean succes = false;
+				
+				for (DisplayObject d : dObjects)
+				{
+					if(givenTarget.equals(d.getName()))
+					{
+						target.setStage(d);
+						System.out.println("Succes!");
+						succes = true;
+						break;
+					}
+				}
+				if (!succes)
+				{
+					JOptionPane.showMessageDialog(null, "Something went wrong when trying to link this object!");
+				}
+				simPanel.repaintTimerOff();
+			}
+		});
+		
+		toggleExit.addActionListener(new ActionListener() // ADD:LESLEY
+		{
+			@Override
+			public void actionPerformed(ActionEvent action) 
+			{
+				DisplayTargetPoint target = (DisplayTargetPoint) selectedObject;
+				
+				for (DisplayObject d : dObjects)
+				{
+					if(d.getName().equals(target.getName()))
+					{
+						target.toggleExit();
+					}
+				}
+				simPanel.repaintTimerOff();
+			}
+		});
 	}
 	
 	public void show(MouseEvent e, DisplayObject a, List<DisplayObject> objects) 
 	{
 		boolean isTargetPoint = false;
+		addNeighbour.setEnabled(false);
+		setStage.setEnabled(false);
+		toggleExit.setEnabled(false);
 		selectedObject = a;
+		
 		if (selectedObject.getClass() == DisplayTargetPoint.class)        // ADD:LESLEY
 		{                                                                 // ADD:LESLEY
-			addNeighbour.setEnabled(true);                                // ADD:LESLEY
+			addNeighbour.setEnabled(true);  
+			setStage.setEnabled(true); 
+			toggleExit.setEnabled(true);
 		}
 		kop.setFont(new Font("Arial", Font.ITALIC, 12));
 		kop.setText(selectedObject.getType() + ": " + selectedObject.getName());

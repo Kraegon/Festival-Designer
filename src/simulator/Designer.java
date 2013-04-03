@@ -3,6 +3,7 @@ package simulator;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -13,6 +14,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -27,11 +29,13 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import simulator.DisplayableObjects.DisplayObject;
+import simulator.DisplayableObjects.DisplayTargetPoint;
 import simulator.clock.Clock;
 import simulator.playfield.SimulationPanel;
 import IO.IO;
 
 public class Designer extends JFrame {
+	private static Designer INSTANCE;
 	private InputFrame inputFrame;
 	private static JLabel southLabel;
 	private ArrayList<DisplayObject> displayObjects = new ArrayList<DisplayObject>();
@@ -39,10 +43,16 @@ public class Designer extends JFrame {
 	private DefaultListModel<String> model = new DefaultListModel<String>();
 	private JList<String> objectList = new JList<String>(model);
 	SimulationPanel centerPanel = new SimulationPanel();
+	private JButton startButton;
 	private JPanel objectHolder = new JPanel();
+	private JLabel amountOfActors;
+	private JPanel neighboursPanel;
+	private DefaultListModel<String> neighbourModel = new DefaultListModel<String>();
+	private JList<String> neighboursList = new JList<String>(neighbourModel);
 
 	public Designer() {
 		super("2D Designer");
+		INSTANCE = this;
 		makeFrame();
 		refresh();
 	}
@@ -76,8 +86,7 @@ public class Designer extends JFrame {
 		dropList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JComboBox cb = (JComboBox) e.getSource();
-				inputFrame = new InputFrame((String) cb.getSelectedItem(),
-						getLocation());
+				inputFrame = new InputFrame((String) cb.getSelectedItem(), getLocation());
 			}
 		});
 
@@ -97,20 +106,18 @@ public class Designer extends JFrame {
 		setVisible(true);
 		
 		// east
-		JPanel timePanel = new JPanel(new GridLayout(2, 1, 0, 400));
-		final JButton startButton = new JButton("START");
+		JPanel timePanel = new JPanel(new GridLayout(5, 1, 0, 20));
+		startButton = new JButton("START");
 		startButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Clock.getInstance().toggle();
 				if(startButton.getText().equals("STOP"))      //ADD: LESLEY
 				{       									  //ADD: LESLEY
 					centerPanel.stopTimer();				  //ADD: LESLEY
-					startButton.setText("START");             //ADD: LESLEY
 				}                                             //ADD: LESLEY
 				else                                          //ADD: LESLEY
 				{  											  //ADD: LESLEY
 					centerPanel.startTimer();			      //ADD: LESLEY
-					startButton.setText("STOP");              //ADD: LESLEY
 				}                                             //ADD: LESLEY
 			}
 		});
@@ -122,8 +129,25 @@ public class Designer extends JFrame {
 				centerPanel.addActor();
 			}
 		});
+		
+		final JButton killActor = new JButton("Kill Visitor");
+		killActor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				centerPanel.killActor();
+			}
+		});
+		
+		amountOfActors = new JLabel("Amount of Visitors: 0");
+		
+		neighboursPanel = new JPanel();
+		neighboursPanel.setBorder(BorderFactory.createTitledBorder("Neighbours"));
+		neighboursPanel.add(neighboursList);
+		
 		timePanel.add(startButton);
 		timePanel.add(addVisitor);
+		timePanel.add(killActor);
+		timePanel.add(amountOfActors);
+		timePanel.add(neighboursPanel);
 		contentPane.add(timePanel, BorderLayout.EAST);
 	}
 
@@ -191,6 +215,37 @@ public class Designer extends JFrame {
 	public static void setSouthLabel(String text) {
 		southLabel.setText(text);
 	}
+	
+	public void setNeighboursPanel(List<DisplayTargetPoint> targetPoints) {
+		neighbourModel.removeAllElements();
+		if (targetPoints.isEmpty())
+		{
+			neighbourModel.add(0, "No Neighbours!");
+		}
+		else
+		{
+			int index = 0;
+			for (DisplayTargetPoint t : targetPoints)
+			{
+				neighbourModel.add(index, t.getName());
+				index++;
+			}
+		}
+	}
+	
+	public void setVisitors(int visitors) {
+		amountOfActors.setText("Amount of Visitors: " + visitors);
+	}
+	
+	public void setStartButton(String text) {
+		startButton.setText(text);
+	}
+	
+	public static Designer getInstance(){                                  
+		if(INSTANCE == null)                                                        
+			INSTANCE = new Designer();                                       
+		return INSTANCE;                                                            
+	}  
 
 	public class MyMouseListener implements MouseListener {
 		public void mouseClicked(MouseEvent e) {
@@ -213,6 +268,11 @@ public class Designer extends JFrame {
 					SimulationPanel.getInstance().setSelectedObject(d);
 					centerPanel.setArrow(d.getLocation().getX(), d.getLocation().getY());
 					centerPanel.repaintTimerOff(); // ADD: LESLEY
+					if (d.getClass() == DisplayTargetPoint.class)									//ADD: LESLEY
+					{																				//ADD: LESLEY
+						DisplayTargetPoint displayTarget = (DisplayTargetPoint)d;					//ADD: LESLEY
+						Designer.getInstance().setNeighboursPanel(displayTarget.getNeighbours());	//ADD: LESLEY
+					}																				//ADD: LESLEY
 				}
 			}
 		}

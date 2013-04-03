@@ -11,6 +11,8 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 
+import simulator.playfield.SimulationPanel;
+
 @SuppressWarnings("serial")
 public class DisplayActor extends DisplayObject implements Serializable {
 
@@ -93,13 +95,27 @@ public class DisplayActor extends DisplayObject implements Serializable {
 		// IF TARGETLOCATION REACHED
 		if (location.getX() > targetLocation.getX() - boundary && location.getX() < targetLocation.getX() + boundary &&
 			location.getY() > targetLocation.getY() - boundary && location.getY() < targetLocation.getY() + boundary) 
-		{		
+		{	
+			if (actions.get(0).isExit())
+			{
+				SimulationPanel.getInstance().killActor(getName());
+				return;
+			}
+			
 			if (actions.get(0).hasNeighbour())
 			{
-				addTarget(actions.get(0).getRandomNeighbour()); 	// add a neighbour to list
-				actions.remove(0); 									// remove location from list
-				setTargetLocation(actions.get(0).getLocation()); 	// set neighbor as new targetlocation
-				lastTargetLocation = actions.get(actions.size()-1).getLocation();
+				if (actions.get(0).getStageIsActive())
+				{
+					// ADD RANDOM TARGETLOCATION TO LIST
+					setTargetLocation(getRandomPoint2D());
+				}
+				else
+				{
+					addTarget(actions.get(0).getRandomNeighbour()); 	// add a neighbour to list
+					actions.remove(0); 									// remove location from list
+					setTargetLocation(actions.get(0).getLocation()); 	// set neighbor as new targetlocation
+					lastTargetLocation = actions.get(actions.size()-1).getLocation();
+				}
 			}
 			else
 			{

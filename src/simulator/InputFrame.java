@@ -155,8 +155,8 @@ public class InputFrame extends JFrame
 		{
 			public void actionPerformed(ActionEvent e) 
 			{
-
-				JTextField name = (JTextField) comps[3];
+				JComboBox<String> c = (JComboBox<String>)comps[3];
+				JTextField name = new JTextField(c.getSelectedItem().toString());
 				JTextField breedte = (JTextField) comps[4];
 				JTextField hoogte = (JTextField) comps[5];
 					
