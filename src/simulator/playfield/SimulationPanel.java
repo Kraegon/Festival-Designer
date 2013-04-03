@@ -312,11 +312,12 @@ public class SimulationPanel extends JPanel
 			a.update();                
 	}      
 	
-	public void updateActors() 		 // ADD: LESLEY
+	public void updateActors() 		 
 	{    
 		for(DisplayActor a : displayActor)	
-			a.update(displayActor);                
-	}   
+				a.update(displayObjects);           
+			
+	} 
 	
 	public void stopTimer() {      // ADD: LESLEY
 		t.stop();               
