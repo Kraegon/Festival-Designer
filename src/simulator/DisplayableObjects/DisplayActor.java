@@ -29,8 +29,6 @@ public class DisplayActor extends DisplayObject implements Serializable {
 	private static int id = 0;
 	private final static int WIDTH = 30;
 	private final static int HEIGHT = 30;
-	LinkedList<DisplayObject> otherActors;
-	LinkedList<DisplayObject> otherObjects;
 	List<DisplayTargetPoint> actions = new LinkedList<DisplayTargetPoint>();
 
 	public DisplayActor(Point2D location, double direction,

@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.LinkedList;
 
 import simulator.DisplayableObjects.DisplayObject;
 import timetableModule.data.Artist;
@@ -137,6 +138,39 @@ public class IO {
 		try{
 			objIn = new ObjectInputStream(new FileInputStream(objectFile));
 			DisplayObject opened = (DisplayObject) objIn.readObject();
+			objIn.close();
+			return opened;
+		} catch (ClassNotFoundException e) {
+			System.out.println("Class not found");
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	public void saveSetup(LinkedList<DisplayObject> setup){
+		ObjectOutputStream objOut;
+		File objectFile = new File("Objecten\\lastsetup.dat");
+		try {
+			objOut = new ObjectOutputStream(new FileOutputStream(objectFile));
+			if(!objectFile.exists()){
+					objectFile.createNewFile();
+			}
+			objOut.writeObject(setup);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	public LinkedList<DisplayObject> openSetup(){
+		ObjectInputStream objIn;
+		File objectFile = new File("Objecten\\lastsetup.dat");
+		try{
+			objIn = new ObjectInputStream(new FileInputStream(objectFile));
+			LinkedList<DisplayObject> opened = (LinkedList<DisplayObject>) objIn.readObject();
 			objIn.close();
 			return opened;
 		} catch (ClassNotFoundException e) {

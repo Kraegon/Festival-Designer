@@ -331,7 +331,13 @@ public class SimulationPanel extends JPanel
 		{
 			t.start(); 
 		}
-	}                        
+	}            
+	public LinkedList<DisplayObject> getDisplayObjects(){
+		return displayObjects;
+	}
+	public void setDisplayObjects(LinkedList<DisplayObject> displayObjects){
+		this.displayObjects = displayObjects;
+	}
 	public DisplayObject getSelectedObject() {
 		return SimulationPanel.selectedObject;
 	}

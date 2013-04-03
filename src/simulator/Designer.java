@@ -155,15 +155,24 @@ public class Designer extends JFrame {
 
 		/** JMenu **/
 		JMenuItem clear = new JMenuItem("Clear");
-		JMenuItem open = new JMenuItem("Open agenda");
-		JMenuItem save = new JMenuItem("Opslaan");
+		JMenuItem open = new JMenuItem("Open setup");
+		JMenuItem save = new JMenuItem("Save");
 		JMenuItem refresh = new JMenuItem("Refresh");
 		menuBar.add(refresh);
 		menuBar.add(open);
 		menuBar.add(save);
 		menuBar.add(clear);
 		setJMenuBar(menuBar);
-
+		open.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				SimulationPanel.getInstance().setDisplayObjects(IO.getInstance().openSetup());
+			}
+		});
+		save.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				IO.getInstance().saveSetup(SimulationPanel.getInstance().getDisplayObjects());
+			}
+		});
 		clear.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

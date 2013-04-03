@@ -6,13 +6,11 @@ package simulator.clock;
 public class Clock {
 	private static Clock INSTANCE;
 	
-	private int startTime;
 	private int time; //total in seconds
 	private int elapseSpeed = 1000;
 	private TimeElapse absoluteTimeCoreRuler;
 	
 	public Clock(){
-		startTime = 0;
 		absoluteTimeCoreRuler = new TimeElapse();
 		absoluteTimeCoreRuler.start();
 	}
@@ -52,7 +50,7 @@ public class Clock {
 	 * @param seconds : The time to go to in seconds.
 	 */
 	public void setStartTime(int startTime){
-		this.startTime = startTime;
+		time = startTime;
 	}
 	/**
 	 * Speed up or slow down the flow of time by setting the amount of milliseconds per increment. 
@@ -90,7 +88,7 @@ public class Clock {
 	 */
 	public void incrementTime(){
 		time++;
-		time %= 86400 - startTime;
+		time %= 86400;
 	}
 	/**
 	 * Decreases time until it reaches 0.
@@ -126,9 +124,9 @@ public class Clock {
 	 * Display time in String form.
 	 */
 	public String toString(){
-		int hours = (int) Math.floor((time + startTime) / 3600);
-		int minutes = (int) Math.floor(((time + startTime) % 3600) / 60);
-		int seconds = (int) (((time + startTime) % 3600) % 60);
+		int hours = (int) Math.floor(time/ 3600);
+		int minutes = (int) Math.floor((time % 3600) / 60);
+		int seconds = (int) ((time % 3600) % 60);
 		if(minutes < 10 && seconds < 10)
 			return "[" + hours + ":0" + minutes + ":0" + seconds + "]";
 		else if(minutes < 10 && seconds >= 10)
