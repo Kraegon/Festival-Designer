@@ -8,6 +8,7 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
+import java.util.LinkedList;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -28,6 +29,7 @@ import simulator.DisplayableObjects.DisplayObstacle;
 import simulator.DisplayableObjects.DisplayStage;
 import simulator.DisplayableObjects.DisplayTargetPoint;
 import simulator.DisplayableObjects.DisplayToilet;
+import timetableModule.data.Stage;
 import IO.IO;
 
 public class InputFrame extends JFrame
@@ -35,7 +37,6 @@ public class InputFrame extends JFrame
 	private CheckInputs checkInp;
 	private String source;
 	// dit zullen later de in de agenda opgeslagen stage objecten worden
-	private String[] stages = {"MainStage", "BigStage", "SmallStage", "Indie", "Metal", "Rock", "Jazz" };
 	JComboBox<String> cb;
 	JCheckBox b;
 	
@@ -127,14 +128,21 @@ public class InputFrame extends JFrame
 		add(rightPane, BorderLayout.CENTER);
 		add(okPane, BorderLayout.SOUTH);
 	}
-	
+	/**
+	 * Vervang methode -- Julian
+	 */
 	public void makeStage()
 	{
 		setTitle("Create Stage");
+		LinkedList<Stage> stages = IO.getInstance().getFestival().getStages();		
+		String[] stageNames = new String[stages.size()];
+		for(int i = 0; i < stages.size(); i++){
+			stageNames[i] = stages.get(i).getName();
+		}
 		final JComponent[] comps = new JComponent[]
 		{
 			new JLabel("Stage: "), new JLabel ("Hoogte: "), new JLabel ("Breedte: "),
-			cb = new JComboBox<String>(stages),	new JTextField("10"), new JTextField("10")
+			cb = new JComboBox<String>(stageNames),	new JTextField("10"), new JTextField("10")
 		};
 		JPanel leftPane = new JPanel(new GridLayout(4,1));
 		JPanel rightPane = new JPanel(new GridLayout(4,1));
@@ -155,14 +163,12 @@ public class InputFrame extends JFrame
 		{
 			public void actionPerformed(ActionEvent e) 
 			{
-
-				JTextField name = (JTextField) comps[3];
-				JTextField breedte = (JTextField) comps[4];
-				JTextField hoogte = (JTextField) comps[5];
+				JTextField hoogte = (JTextField) comps[4];
+				JTextField breedte = (JTextField) comps[5];
 					
-				if (checkInp.checkString(name.getText()) && checkInp.checkNumber(breedte.getText()) && checkInp.checkNumber(hoogte.getText()))
+				if(checkInp.checkNumber(breedte.getText()) && checkInp.checkNumber(hoogte.getText()))
 				{
-					DisplayObject o = new DisplayStage(name.getText(), new Dimension(Integer.parseInt(breedte.getText()),Integer.parseInt(hoogte.getText())), false, new Point2D.Double(0,0), "Stage");			
+					DisplayObject o = new DisplayStage((String) cb.getSelectedItem(), new Dimension(Integer.parseInt(breedte.getText()),Integer.parseInt(hoogte.getText())), false, new Point2D.Double(0,0), "Stage", IO.getInstance().getFestival().findStage((String) cb.getSelectedItem()));			
 					IO.getInstance().saveFestivalObject(o);
 					dispose();
 				}

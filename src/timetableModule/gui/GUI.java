@@ -536,13 +536,19 @@ import IO.IO;
 	    {
 	        return status;
 	    }
-	    
+	    /**
+	     * Vervangen hele methode -- JULIAN
+	     */
 	    private void executeSimulator()
 	    {
-	    	statusLabel.setText("Starting simulator");
-	    	simulator.SimulatorMain.getInstance();
-	    	if(simulator.SimulatorMain.getInstance().getDesigner() != null)
-	    		simulator.SimulatorMain.getInstance().getDesigner().setVisible(true);
+	    	if(io.getFestival() != null){
+		    	statusLabel.setText("Starting simulator");
+		    	simulator.SimulatorMain.getInstance();
+		    	if(simulator.SimulatorMain.getInstance().getDesigner() != null)
+		    		simulator.SimulatorMain.getInstance().getDesigner().setVisible(true);
+	    	} else {
+	    		JOptionPane.showMessageDialog(null, "No active festival set.");
+	    	}
 	    }
 	
 	    private void enableButtons(JButton[] buttons)
