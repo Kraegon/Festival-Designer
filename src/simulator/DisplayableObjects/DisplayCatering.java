@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class DisplayCatering extends DisplayObject implements Serializable
 {
 	Rectangle2D bounds;
-	
+
 	public DisplayCatering(String name, Dimension size, boolean isSolid, Point2D location, String type)
 	{
 		super(name, size, true, location, "Catering");

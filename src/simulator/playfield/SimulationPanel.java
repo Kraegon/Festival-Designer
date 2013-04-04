@@ -1,5 +1,6 @@
 package simulator.playfield;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -16,6 +17,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -25,30 +27,45 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import simulator.Designer;
 import simulator.DisplayableObjects.DisplayActor;
 import simulator.DisplayableObjects.DisplayEntrance;
 import simulator.DisplayableObjects.DisplayObject;
 import simulator.DisplayableObjects.DisplayTargetPoint;
 import simulator.clock.Clock;
+import timetableModule.data.Performance;
+import timetableModule.data.Stage;
 import IO.IO;
 
 public class SimulationPanel extends JPanel
 {
 	private static SimulationPanel INSTANCE;
-	private int amountOfActors = 10;
 	private double zoom = 1;
 	private boolean isActive = true;
-	private Rectangle2D field;
 	private LinkedList<DisplayObject> displayObjects = new LinkedList<DisplayObject>();
 	private LinkedList<DisplayActor> displayActor = new LinkedList<DisplayActor>();
+	LinkedList<Stage> stages = IO.getInstance().getFestival().getStages();
+	LinkedList<Performance> performances = IO.getInstance().getFestival().getPerformances();
 	private static DisplayObject selectedObject;
 	private Point2D lastPoint = null;
 	private int focusX;
 	private int focusY;
+	private int festWidth = 800;
+	private int festHeight = 600;
 	static boolean TargetingMode = false;
 	private boolean entrancePlaced = false;
 	private boolean firstTargetPlaced = false;
-	Timer t;										// ADD: LESLEY
+	private boolean errorOccurred = false;
+	private int actorsOnScreen = 0;
+	private BufferedImage explosion;
+	
+	Point2D actorLocation = new Point2D.Double(0, 0);
+	int index = 0;
+	int xPos = 0;
+	int yPos = 0;
+	boolean end = false;
+	
+	Timer t;		
 	PopupListener popup = new PopupListener(this);
 	SelectionArrow arrow = new SelectionArrow(0, 0);
 	DisplayTargetPoint firstTarget;
@@ -56,34 +73,35 @@ public class SimulationPanel extends JPanel
 	
 	public SimulationPanel()
 	{
-		//double direction = Math.random() * 2 * Math.PI;
-		//for (int i = 0; i < 100; i++){
-		//	displayActor.add(new DisplayActor((new Point2D.Double(50, 50)), direction));
-		//}
-		//ADD VANAF HIER
 		String startTime = IO.getInstance().getFestival().getStartTime();
-		if(startTime.length() == 4)
-			Clock.getInstance().setStartTime(Integer.parseInt(startTime.substring(0, 1)) * 3600 + Integer.parseInt(startTime.substring(2, 4)) * 60);
-		else
+		if(startTime.length() == 5)
+		{
 			Clock.getInstance().setStartTime(Integer.parseInt(startTime.substring(0, 2)) * 3600 + Integer.parseInt(startTime.substring(3, 5)) * 60);
+		}
+		else
+		{
+			Clock.getInstance().setStartTime(Integer.parseInt(startTime.substring(0, 1)) * 3600 + Integer.parseInt(startTime.substring(2, 4)) * 60);
+		}
 		Repainter painter = new Repainter(this);
 		painter.start();
-		//TOT HIER -- JULIAN
-		t = new Timer(1, new ActionListener() {     	// ADD: LESLEY
-			public void actionPerformed(ActionEvent arg0) {
-				if(isActive) {
+		INSTANCE = this;
+		t = new Timer(1, new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				if(isActive) 
+				{
+					repaint();
 					updateObjects();
 					updateActors();
 				}
 				try {
 					Thread.sleep(Clock.getInstance().getSpeed()/60);
-				} catch (InterruptedException e) {
+					} catch (InterruptedException e) {
 					e.printStackTrace();
-				}
+					}
 			}
 		});
-		
-		//t.start();
+
 		addMouseWheelListener(new MouseWheelListener() {
 			public void mouseWheelMoved(MouseWheelEvent e) {
 				int modifier = e.getWheelRotation();
@@ -154,13 +172,13 @@ public class SimulationPanel extends JPanel
 							if (selectedObject.getClass() == DisplayEntrance.class && !entrancePlaced)											//ADD: LESLEY
 							{                                                                                                                   //ADD: LESLEY
 								System.out.println("ENTRANCE PLACED");                                                                          //ADD: LESLEY
-								entranceLocation = new Point2D.Double(selectedObject.getLocation().getX(), selectedObject.getLocation().getY());//ADD: LESLEY
+								entranceLocation = new Point2D.Double(selectedObject.getLocation().getX(), selectedObject.getLocation().getY()); //ADD: LESLEY
 								entrancePlaced = true;                                                                                          //ADD: LESLEY
 							}                                                                                                                   //ADD: LESLEY
 							// SET TARGETPOINTS                                                                                                 //ADD: LESLEY
 							if (selectedObject.getClass() == DisplayTargetPoint.class)                                       					//ADD: LESLEY
 							{     																												//ADD: LESLEY
-								System.out.println("TARGETPOINT PLACED");                                                                       //ADD: LESLEY
+								System.out.println("TARGETPOINT PLACED"); 																		//ADD: LESLEY
 								if (selectedObject.getName().equals("FIRST_TARGET"))															//ADD: LESLEY
 								{																												//ADD: LESLEY
 									firstTarget = (DisplayTargetPoint)selectedObject;    														//ADD: LESLEY
@@ -176,16 +194,20 @@ public class SimulationPanel extends JPanel
 						}                                                                                                                       //ADD: LESLEY
 						else if (e.getButton() == MouseEvent.BUTTON3) 
 						{
-							//VANAF HIER
+							popup.show(e, selectedObject, displayObjects);
 							DisplayObject underlying = null;
-							for(DisplayObject o : displayObjects){
+							for(DisplayObject o : displayObjects)
+							{
 								Rectangle2D bounds = new Rectangle2D.Double(o.getX(), o.getY(), o.getSize().getWidth(), o.getSize().getHeight());
 								if(bounds.contains((e.getX() - focusX) / zoom, (e.getY() - focusY) / zoom))
+								{
 									underlying = o;
+								}
+								if(underlying != null)
+								{
+									popup.show(e, underlying, displayObjects);
+								}
 							}
-							if(underlying != null)
-								popup.show(e, underlying, displayObjects);
-							//TOT HIER --JULIAN
 						}
 					}
 				} else {
@@ -193,7 +215,7 @@ public class SimulationPanel extends JPanel
 					if (e.getButton() == MouseEvent.BUTTON1) {
 						// loop de array door of er een toe te voegen object is.
 						for (DisplayObject a : displayObjects) {
-							
+
 							Point2D mouse = e.getPoint();
 							// System.out.println("mouse: " + mouse);
 							Point2D object = a.getLocation();
@@ -226,15 +248,8 @@ public class SimulationPanel extends JPanel
 				}
 			}
 		});
-	}
-	public void placeActors(Point2D point) 	//ADD: LESLEY
-	{                                                                              
-		for (int i = 0; i < amountOfActors; i++)                                   
-		{                                                                          
-			double direction = Math.random() * 2 * Math.PI;                        
-			displayActor.add(new DisplayActor(point, direction, firstTarget));     
-		}                                                                          
-	}                                                                              
+		readExplosionFile();
+	}                                                                            
 	
 	public void addActor()                                         
 	{                                                                                                                                                       
@@ -245,11 +260,40 @@ public class SimulationPanel extends JPanel
 		else
 		{
 			double direction = Math.random() * 2 * Math.PI;
-			displayActor.add(new DisplayActor(entranceLocation, direction, firstTarget));   
+			displayActor.add(new DisplayActor(entranceLocation, direction, firstTarget));
+			actorsOnScreen++;
+			Designer.getInstance().setVisitors(actorsOnScreen);	
 		}
 	}   
+
+	public void killActor()                                          
+	{                                                               
+		if (!displayActor.isEmpty())                                
+		{                                                            
+			errorOccurred = true;
+			actorLocation = displayActor.get(displayActor.size()-1).getLocation();
+			displayActor.remove(displayActor.size()-1);                  
+			actorsOnScreen--;
+			if (actorsOnScreen < 0) { actorsOnScreen = 0; }
+			Designer.getInstance().setVisitors(actorsOnScreen);    
+		}                                                                
+	}
+	
+	public void killActor(String name)
+	{
+		for (DisplayActor d : displayActor)
+		{
+			if (d.getName().equals(name))
+			{
+				d.setVisible(false);
+				actorsOnScreen--;
+				if (actorsOnScreen < 0) { actorsOnScreen = 0; }
+				Designer.getInstance().setVisitors(actorsOnScreen);  
+			}
+		}
+	}
 	                                                                                
-	public static SimulationPanel getInstance(){                                    
+	public static SimulationPanel getInstance(){                                  
 		if(INSTANCE == null)                                                        
 			INSTANCE = new SimulationPanel();                                       
 		return INSTANCE;                                                            
@@ -276,8 +320,6 @@ public class SimulationPanel extends JPanel
 		g.scale(zoom, zoom);
 		g.setPaint(Color.BLACK);
 		
-		g.drawRect(0, 0, getWidth(), getHeight()); 
-		
 		//DRAW OBJECTS
 		for(DisplayObject a : displayObjects)
 		{
@@ -289,6 +331,50 @@ public class SimulationPanel extends JPanel
 			a.drawObject(g);
 		}
 		arrow.drawObject(g);
+		
+		//FESTIVAL SIZE
+		g.setStroke(new BasicStroke(5));
+		g.setColor(Color.BLACK);
+		g.drawRect(0, 0, getFestWidth(), getFestHeight());
+		
+		if (errorOccurred)
+		{
+			drawExplosion(g, actorLocation);
+		} 
+	}
+	
+	public void drawExplosion(Graphics g, Point2D location)
+	{		
+		if (index >= 25) 
+		{ 
+			end = true;
+			errorOccurred = false;
+			index = 0;
+			xPos = 0;
+			yPos = 0;
+		}
+		else
+		{
+			xPos = (index % 5)*320/5;
+			yPos = (index / 5)*320/5;
+			index++;
+			int size = 128;
+			
+			BufferedImage subImg = explosion.getSubimage(xPos, yPos, 320/5, 320/5);
+			g.drawImage(subImg, (int)Math.floor(location.getX())-size/2, (int)Math.floor(location.getY())-size/2, size, size, null);
+		}
+	}
+	
+	public void readExplosionFile()
+	{
+		try 
+		{
+			explosion = ImageIO.read(new File("explosions.png"));
+		} 
+		catch (IOException e) 
+		{
+			System.out.println("NO TEXTURE");
+		}
 	}
 	
 	public void setArrow(double x, double y)
@@ -312,16 +398,22 @@ public class SimulationPanel extends JPanel
 			a.update();                
 	}      
 	
-	public void updateActors() 		 
+	public void updateActors() 		 // ADD: LESLEY
 	{    
 		for(DisplayActor a : displayActor)	
-				a.update(displayObjects);           
-			
-	} 
+			a.update(displayObjects);                
+	}   
 	
 	public void stopTimer() {      // ADD: LESLEY
-		t.stop();               
-	}                             
+		t.stop(); 
+		Clock.getInstance().toggle();
+		Designer.getInstance().setStartButton("START");
+	}  
+	
+	public boolean isRunning() {      // ADD: LESLEY
+		return t.isRunning();
+	}  
+	
 	public void startTimer() {     // ADD: LESLEY
 		if (entranceLocation == null || !firstTargetPlaced)
 		{
@@ -330,8 +422,17 @@ public class SimulationPanel extends JPanel
 		else
 		{
 			t.start(); 
+			Clock.getInstance().toggle();
+			Designer.getInstance().setStartButton("STOP");
 		}
-	}            
+	}    
+	
+	public void setFestivalSize(Dimension d)
+	{
+		setFestWidth((int)Math.floor(d.getWidth()));
+		setFestHeight((int)Math.floor(d.getHeight()));
+	}
+	
 	public LinkedList<DisplayObject> getDisplayObjects(){
 		return displayObjects;
 	}
@@ -344,29 +445,49 @@ public class SimulationPanel extends JPanel
 	public void setSelectedObject(DisplayObject selectedObject) {
 		SimulationPanel.selectedObject = selectedObject;
 	}
+	public LinkedList<DisplayActor> getDisplayActors(){
+		return displayActor;
+	}
 	public static boolean isTargetingMode() {
 		return TargetingMode;
 	}
 	public static void setTargetingMode(boolean targetingMode) {
 		TargetingMode = targetingMode;
 	}
-}
 
-/**
- * Gehele klasse toevoegen
- * @author Julian G. West
- */
-class Repainter extends Thread implements Runnable{
-	JPanel source;
-	public Repainter(JPanel source){
-		this.source = source;
+	public int getFestWidth() {
+		return festWidth;
 	}
-	public void run(){
-		while(true){
-			source.repaint();
-			try {
-				Thread.sleep(1000/30);
-			} catch (InterruptedException e) {}
+
+	public void setFestWidth(int festWidth) {
+		this.festWidth = festWidth;
+	}
+
+	public int getFestHeight() {
+		return festHeight;
+	}
+
+	public void setFestHeight(int festHeight) {
+		this.festHeight = festHeight;
+	}
+
+
+	/**
+	 * Gehele klasse toevoegen
+	 * @author Julian G. West
+	 */
+	class Repainter extends Thread implements Runnable{
+		JPanel source;
+		public Repainter(JPanel source){
+			this.source = source;
+		}
+		public void run(){
+			while(true){
+				source.repaint();
+				try {
+					Thread.sleep(1000/30);
+				} catch (InterruptedException e) {}
+			}
 		}
 	}
 }

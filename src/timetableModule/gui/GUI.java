@@ -80,7 +80,7 @@ import IO.IO;
 	         
 	        /** westPanel **/
 	        JPanel westPanel = new JPanel();
-	        westPanel.setLayout(new GridLayout(10, 1, 10, 10));
+	        westPanel.setLayout(new GridLayout(9, 1, 10, 10));
 	        contentPane.add(westPanel, BorderLayout.WEST);
 	        
 	        /** WEST **/
@@ -126,7 +126,7 @@ import IO.IO;
 	                	}
 	                }
 	            });
-	        westPanel.add(new JSeparator());
+	        westPanel.add(new JLabel());
 	        JButton editArtist = new JButton("Edit Artist");
 	        westPanel.add(editArtist);
 	        editArtist.addActionListener(new ActionListener() 
@@ -164,6 +164,20 @@ import IO.IO;
 	                	} else {              	
 	                		editPerformance();
 	                	}                    
+	                }
+	            });
+	        westPanel.add(new JLabel());
+	        JButton executeSimulator = new JButton("Execute Simulator!");
+	        westPanel.add(executeSimulator);
+	        executeSimulator.addActionListener(new ActionListener() 
+	            {
+	                public void actionPerformed(ActionEvent e) 
+	                {   
+	                	if(io.getFestival() == null){
+	                		statusLabel.setText("No festival set.");
+	                	} else {              	
+	                		executeSimulator();
+	                	}                  
 	                }
 	            });
 	          
@@ -234,7 +248,7 @@ import IO.IO;
 	        buttons = new JButton[]
 	        {
 	        	addArtist, addPerformance, addStage, 
-	        	editArtist, editPerformance, editStage
+	        	editArtist, editPerformance, editStage, executeSimulator
 	        };
 	        setResizable(false);
 	    }
@@ -536,19 +550,13 @@ import IO.IO;
 	    {
 	        return status;
 	    }
-	    /**
-	     * Vervangen hele methode -- JULIAN
-	     */
+	    
 	    private void executeSimulator()
 	    {
-	    	if(io.getFestival() != null){
-		    	statusLabel.setText("Starting simulator");
-		    	simulator.SimulatorMain.getInstance();
-		    	if(simulator.SimulatorMain.getInstance().getDesigner() != null)
-		    		simulator.SimulatorMain.getInstance().getDesigner().setVisible(true);
-	    	} else {
-	    		JOptionPane.showMessageDialog(null, "No active festival set.");
-	    	}
+	    	statusLabel.setText("Starting simulator");
+	    	simulator.SimulatorMain.getInstance();
+	    	if(simulator.SimulatorMain.getInstance().getDesigner() != null)
+	    		simulator.SimulatorMain.getInstance().getDesigner().setVisible(true);
 	    }
 	
 	    private void enableButtons(JButton[] buttons)

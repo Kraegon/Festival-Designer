@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class DisplayExit extends DisplayObject implements Serializable
 {
 	Rectangle2D bounds;
-	
+
 	public DisplayExit(String name, Dimension size, boolean isSolid, Point2D location, String type)
 	{
 		super(name, size, isSolid, location, "Exit");

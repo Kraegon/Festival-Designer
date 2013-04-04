@@ -1,20 +1,23 @@
 package simulator.clock;
+
 /**
  * Time machine to keep track of and manipulate time.
  * @author Julian G. West
  */
 public class Clock {
 	private static Clock INSTANCE;
-	
+
+	private int startTime;
 	private int time; //total in seconds
 	private int elapseSpeed = 1000;
 	private TimeElapse absoluteTimeCoreRuler;
-	
+
 	public Clock(){
+		startTime = 0;
 		absoluteTimeCoreRuler = new TimeElapse();
 		absoluteTimeCoreRuler.start();
 	}
-	
+
 	public static Clock getInstance(){
 		if(INSTANCE == null)
 			INSTANCE = new Clock();
@@ -50,8 +53,14 @@ public class Clock {
 	 * @param seconds : The time to go to in seconds.
 	 */
 	public void setStartTime(int startTime){
-		time = startTime;
+		this.startTime = startTime;
+		//time = startTime;
 	}
+	
+	public int getStartTime() {
+		return startTime;
+	}
+
 	/**
 	 * Speed up or slow down the flow of time by setting the amount of milliseconds per increment. 
 	 * The smaller the number the faster, a speed of 1000 is real time and negative numbers are unacceptable.
@@ -88,7 +97,7 @@ public class Clock {
 	 */
 	public void incrementTime(){
 		time++;
-		time %= 86400;
+		time %= 86400 - startTime;
 	}
 	/**
 	 * Decreases time until it reaches 0.
@@ -102,7 +111,7 @@ public class Clock {
 	 * @return current mount of seconds passed.
 	 */
 	public long getCurrentTime(){
-		return time;
+		return time + startTime;
 	}
 	/**
 	 * Get the total amount of minutes passed.
@@ -124,9 +133,9 @@ public class Clock {
 	 * Display time in String form.
 	 */
 	public String toString(){
-		int hours = (int) Math.floor(time/ 3600);
-		int minutes = (int) Math.floor((time % 3600) / 60);
-		int seconds = (int) ((time % 3600) % 60);
+		int hours = (int) Math.floor((time + startTime) / 3600);
+		int minutes = (int) Math.floor(((time + startTime) % 3600) / 60);
+		int seconds = (int) (((time + startTime) % 3600) % 60);
 		if(minutes < 10 && seconds < 10)
 			return "[" + hours + ":0" + minutes + ":0" + seconds + "]";
 		else if(minutes < 10 && seconds >= 10)
@@ -136,24 +145,24 @@ public class Clock {
 		else
 			return "[" + hours + ":" + minutes + ":" + seconds + "]";
 	}
-	
+
 }
 /**
  * Private class that makes sure seconds tick away.
  * @author Julian G. West
  */
 class TimeElapse extends Thread implements Runnable{
-	
+
 	private int elapseSpeed;
 	private boolean isActive;
 	private boolean isIncreasing;
-	
+
 	public TimeElapse(){
 		elapseSpeed = 1000;
 		isActive = false;
 		isIncreasing = true;
 	}
-	
+
 	public void run(){
 		while(true){
 			if(isActive){

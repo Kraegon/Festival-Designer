@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class DisplayEntrance extends DisplayObject implements Serializable
 {
 	Rectangle2D bounds;
-	
+
 	public DisplayEntrance(String name, Dimension size, boolean isSolid, Point2D location, String type)
 	{
 		super(name, size, false, location, "Entrance");

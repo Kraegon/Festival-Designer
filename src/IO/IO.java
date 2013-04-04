@@ -29,7 +29,7 @@ public class IO {
 	private String filePath;	
 	private static IO INSTANCE;
 	File festiFile;	
-	
+
 	public IO(){
 		INSTANCE = this;
 	}
@@ -38,7 +38,7 @@ public class IO {
 			new IO("default.fest");
 		return INSTANCE;
 	}
-	
+
 	public IO(String filePath){
 		this.filePath = filePath;
 		festiFile = new File(filePath);
@@ -49,7 +49,7 @@ public class IO {
 		}
 		INSTANCE = this;
 	}
-	
+
 	public Festival getFestival() {
 		return festival;
 	}
@@ -73,7 +73,7 @@ public class IO {
 	public void setFestiFile(File festiFile) {
 		this.festiFile = festiFile;
 	}
-	
+
 	public void openFestival() throws IOException{
 		ObjectInputStream objIn;
 		try{
@@ -94,7 +94,7 @@ public class IO {
 			Screen.getInstance().findStage(p.getStage().getName()).addPerformance(new GraphicPerformance(p));
 		}
 	}
-	
+
 	public void saveFestival() throws IOException, NullPointerException{
 		ObjectOutputStream objOut;
 				if(festiFile.exists()){
@@ -108,7 +108,7 @@ public class IO {
 					objOut.close();
 				}
 	}
-	
+
 	public void printFestival(){
 		System.out.println("Festival: " + filePath);
 		if(festival != null)
@@ -116,7 +116,7 @@ public class IO {
 		else
 			System.out.println("No current festival");
 	}
-	
+
 	public void saveFestivalObject(DisplayObject o){
 		ObjectOutputStream objOut;
 		File objectFile = new File("Objecten\\" + o.getName() + ".object");

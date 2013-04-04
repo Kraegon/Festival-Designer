@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class DisplayToilet extends DisplayObject implements Serializable
 {
 	Rectangle2D bounds;
-	
+
 	public DisplayToilet(String name, Dimension size, boolean isSolid, Point2D location, String type)
 	{
 		super(name, size, true, location, "Toilet");
@@ -35,6 +35,6 @@ public class DisplayToilet extends DisplayObject implements Serializable
 	@Override
 	public void update() {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

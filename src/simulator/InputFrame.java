@@ -37,6 +37,7 @@ public class InputFrame extends JFrame
 	private CheckInputs checkInp;
 	private String source;
 	// dit zullen later de in de agenda opgeslagen stage objecten worden
+	private String[] stages = {"MainStage", "BigStage", "SmallStage", "Indie", "Metal", "Rock", "Jazz" };
 	JComboBox<String> cb;
 	JCheckBox b;
 	
@@ -128,9 +129,7 @@ public class InputFrame extends JFrame
 		add(rightPane, BorderLayout.CENTER);
 		add(okPane, BorderLayout.SOUTH);
 	}
-	/**
-	 * Vervang methode -- Julian
-	 */
+	
 	public void makeStage()
 	{
 		setTitle("Create Stage");
@@ -146,7 +145,7 @@ public class InputFrame extends JFrame
 		};
 		JPanel leftPane = new JPanel(new GridLayout(4,1));
 		JPanel rightPane = new JPanel(new GridLayout(4,1));
-		
+
 		for(JComponent component : comps)
 		{
 			if(component.getClass() == JLabel.class){
@@ -155,7 +154,7 @@ public class InputFrame extends JFrame
 				rightPane.add(component);
 			}
 		}
-		
+
 		JPanel okPane = new JPanel();
 		JButton ok = new JButton("OK");
 		okPane.add(ok);
@@ -165,7 +164,7 @@ public class InputFrame extends JFrame
 			{
 				JTextField hoogte = (JTextField) comps[4];
 				JTextField breedte = (JTextField) comps[5];
-					
+
 				if(checkInp.checkNumber(breedte.getText()) && checkInp.checkNumber(hoogte.getText()))
 				{
 					DisplayObject o = new DisplayStage((String) cb.getSelectedItem(), new Dimension(Integer.parseInt(breedte.getText()),Integer.parseInt(hoogte.getText())), false, new Point2D.Double(0,0), "Stage", IO.getInstance().getFestival().findStage((String) cb.getSelectedItem()));			
